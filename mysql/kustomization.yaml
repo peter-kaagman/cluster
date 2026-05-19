@@ -1,4 +1,5 @@
 resources:
+  - clustersecretstore.yaml
   - external-secret.yaml
   - mysql-deployment.yaml
   - mysql-service.yaml
