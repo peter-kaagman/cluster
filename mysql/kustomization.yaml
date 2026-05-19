@@ -1,3 +1,0 @@
-resources:
-  - external-secret.yaml
-  - mysql-bitnami.yaml

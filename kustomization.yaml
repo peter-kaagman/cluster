@@ -1,5 +1,0 @@
-resources:
-  - mysql/application-mysql.yaml
-  - eso/application-eso.yaml
-  - argocd/application-argocd.yaml
-  - application-root.yaml
