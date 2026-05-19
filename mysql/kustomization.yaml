@@ -1,9 +1,0 @@
-resources:
-  - external-secret.yaml
-
-helmCharts:
-  - name: mysql
-    repo: https://charts.bitnami.com/bitnami
-    releaseName: mysql
-    namespace: mysql
-    valuesFile: values.yaml
