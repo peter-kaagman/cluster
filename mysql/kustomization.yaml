@@ -1,6 +1,5 @@
 resources:
   - external-secret.yaml
-  - pvc.yaml
 
 helmCharts:
   - name: mysql

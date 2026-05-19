@@ -3,7 +3,6 @@ auth:
   existingSecretPasswordKey: MYSQL_ROOT_PASSWORD
 primary:
   persistence:
-    existingClaim: mysql-pvc
     enabled: true
     size: 5Gi
     accessModes:
