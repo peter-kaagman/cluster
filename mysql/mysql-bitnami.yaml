@@ -15,7 +15,7 @@ spec:
           existingSecret: mysql-secret
           existingSecretPasswordKey: MYSQL_ROOT_PASSWORD
         image:
-          tag: 8.0.36
+          tag: 8.4.9-r4
         primary:
           persistence:
             enabled: true
