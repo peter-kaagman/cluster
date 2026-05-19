@@ -1,0 +1,4 @@
+resources:
+  - ../eso/application-eso-crds.yaml
+  - ../eso/application-eso.yaml
+  - ../mysql/application-mysql.yaml
