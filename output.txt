@@ -1,0 +1,5 @@
+NAME         SYNC STATUS   HEALTH STATUS   REVISION                                   PROJECT
+argocd       Synced        Healthy         8afe5b11b517b017b089c008a0093f450aaac02a   default
+eso          Synced        Healthy         8afe5b11b517b017b089c008a0093f450aaac02a   default
+mysql        Synced        Healthy         8afe5b11b517b017b089c008a0093f450aaac02a   default
+mysql-helm   Synced        Healthy         8afe5b11b517b017b089c008a0093f450aaac02a   default
