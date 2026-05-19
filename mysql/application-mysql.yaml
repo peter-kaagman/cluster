@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mysql-bitnami
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/peter-kaagman/cluster.git
+    targetRevision: main
+    path: cluster/mysql
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mysql
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
