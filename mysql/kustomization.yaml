@@ -1,0 +1,4 @@
+resources:
+  - external-secret.yaml
+  - mysql-deployment.yaml
+  - mysql-service.yaml
