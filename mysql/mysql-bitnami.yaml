@@ -8,12 +8,14 @@ spec:
   source:
     repoURL: oci://registry-1.docker.io/bitnamicharts
     chart: mysql
-    targetRevision: 9.21.3
+    targetRevision: 9.22.0
     helm:
       values: |
         auth:
           existingSecret: mysql-secret
           existingSecretPasswordKey: MYSQL_ROOT_PASSWORD
+        image:
+          tag: 8.0
         primary:
           persistence:
             enabled: true
