@@ -1,0 +1,10 @@
+resources:
+  - external-secret.yaml
+  - pvc.yaml
+
+helmCharts:
+  - name: mysql
+    repo: https://charts.bitnami.com/bitnami
+    releaseName: mysql
+    namespace: mysql
+    valuesFile: values.yaml

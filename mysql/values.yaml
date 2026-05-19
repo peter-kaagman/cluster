@@ -1,0 +1,13 @@
+auth:
+  existingSecret: mysql-secret
+  existingSecretPasswordKey: MYSQL_ROOT_PASSWORD
+primary:
+  persistence:
+    existingClaim: mysql-pvc
+    enabled: true
+    size: 5Gi
+    accessModes:
+      - ReadWriteOnce
+service:
+  type: ClusterIP
+  port: 3306
