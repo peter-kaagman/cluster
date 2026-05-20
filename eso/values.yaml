@@ -1,5 +1,0 @@
-rbac:
-  create: true
-serviceAccount:
-  create: true
-  name: external-secrets
