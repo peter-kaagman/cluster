@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: git@github.com:peter-kaagman/cluster.git
     targetRevision: main
-    path: mysql
+    path: argocd/mysql
   destination:
     server: https://kubernetes.default.svc
     namespace: mysql
