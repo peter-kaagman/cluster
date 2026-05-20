@@ -6,13 +6,12 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/peter-kaagman/cluster.git
-    path: mysql/helm
-    chart: .
-    targetRevision: main
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: mysql
+    targetRevision: 14.0.3
     helm:
       valueFiles:
-        - values.yaml
+        - ../../mysql/helm/values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: mysql
