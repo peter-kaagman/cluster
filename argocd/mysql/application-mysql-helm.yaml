@@ -8,8 +8,8 @@ spec:
   source:
     repoURL: https://github.com/peter-kaagman/cluster.git
     path: mysql/helm
-    chart: mysql
-    targetRevision: 14.0.3
+    chart: .
+    targetRevision: main
     helm:
       valueFiles:
         - values.yaml
