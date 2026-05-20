@@ -1,0 +1,7 @@
+auth:
+  existingSecret: mysql-root-password
+  rootPasswordKey: password
+primary:
+  persistence:
+    enabled: true
+    size: 8Gi

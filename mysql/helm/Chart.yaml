@@ -1,0 +1,7 @@
+apiVersion: v2
+name: mysql
+version: 0.1.0
+dependencies:
+  - name: mysql
+    version: 14.0.3
+    repository: https://charts.bitnami.com/bitnami
