@@ -1,7 +1,0 @@
-apiVersion: v2
-name: mysql-helm
-version: 0.1.0
-dependencies:
-  - name: mysql
-    version: 14.0.3
-    repository: ""
