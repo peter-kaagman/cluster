@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: mysql-helm
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/repository-secret-name: dockerhub-creds
 spec:
   project: default
   source:
