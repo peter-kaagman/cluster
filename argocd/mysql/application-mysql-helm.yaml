@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://charts.bitnami.com/bitnami
+    repoURL: oci://registry-1.docker.io/bitnamicharts
     chart: mysql
-    targetRevision: 14.0.3
+    targetRevision: 14.1.2
     helm:
       valueFiles:
         - values.yaml
