@@ -16,15 +16,16 @@ spec:
         architecture: standalone
 
         auth:
-          existingSecret: mysql-root-password
-          rootPasswordKey: password
+          existingSecret: mysql-credentials
           database: happyminds
-          username: happyminds
-          existingSecretUser: mysql-happyminds-secret
-          usernameKey: username
-          passwordKey: password
 
         primary:
+          podSecurityContext:
+            enabled: false
+
+          containerSecurityContext:
+            enabled: false
+
           image:
             registry: docker.io
             repository: peterkaagman/mysql
@@ -43,6 +44,11 @@ spec:
                 - ping
                 - -h
                 - localhost
+
+        volumePermissions:
+          enabled: false
+
+
 
   destination:
     server: https://kubernetes.default.svc
