@@ -6,6 +6,9 @@ metadata:
 spec:
   entryPoints:
     - websecure
+  middlewares:
+    - name: forwarded-headers
+      namespace: argocd
   routes:
     - match: Host(`argocd.prjv.nl`)
       kind: Rule
