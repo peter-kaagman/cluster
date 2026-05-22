@@ -1,5 +1,10 @@
-auth:
+image:
+  registry: docker.io
+  repository: peterkaagman/mysql
+  tag: 8.4.9
+  digest: sha256:14690274f4967ba207939c97dd79a8d6604f1d532218ea6be69c0001ddd2d45f
 
+auth:
   existingSecret: mysql-root-password
   rootPasswordKey: password
   database: happyminds
@@ -13,19 +18,14 @@ primary:
     enabled: true
     size: 8Gi
     mountPath: /var/lib/mysql
-
-image:
-  registry: docker.io
-  repository: peterkaagman/mysql
-  tag: "8.4.9@sha256:14690274f4967ba207939c97dd79a8d6604f1d532218ea6be69c0001ddd2d45f"
+  customLivenessProbe:
+    exec:
+      command:
+        - mysqladmin
+        - ping
+        - -h
+        - localhost
 
 architecture: standalone
 
-customLivenessProbe:
-  exec:
-    command:
-      - mysqladmin
-      - ping
-      - -h
-      - localhost
 
