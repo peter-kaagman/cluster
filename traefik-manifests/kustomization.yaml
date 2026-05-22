@@ -7,5 +7,3 @@ resources:
   - service.yaml
   - traefik-acme-pvc.yaml
   - ingressroute-argocd.yaml
-  - ingressroute-mysite-prjv-nl.yaml
-  - ingressroute-happyminds-nl.yaml
