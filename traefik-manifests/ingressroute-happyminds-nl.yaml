@@ -1,0 +1,26 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: happyminds-nl
+  namespace: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`happyminds.nl`) || Host(`www.happyminds.nl`)
+      kind: Rule
+      services:
+        - name: happyminds-external
+          kind: TraefikService
+  tls:
+    certResolver: letsencrypt
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: TraefikService
+metadata:
+  name: happyminds-external
+  namespace: traefik
+spec:
+  loadBalancer:
+    servers:
+      - url: "http://192.168.5.230"

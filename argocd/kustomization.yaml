@@ -1,4 +1,5 @@
 # Kustomization voor ArgoCD App-of-Apps patroon
 resources:
   - application-argocd.yaml
-  - mysql/application-mysql.yaml
+  - application-mysql.yaml
+  - application-traefik.yaml
