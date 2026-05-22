@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: argocd.prjv.nl
+    - match: Host(`argocd.prjv.nl`)
       kind: Rule
       services:
         - name: argocd-server
