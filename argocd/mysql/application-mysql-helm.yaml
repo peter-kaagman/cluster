@@ -3,13 +3,11 @@ kind: Application
 metadata:
   name: mysql-helm
   namespace: argocd
-  annotations:
-    argocd.argoproj.io/repository-secret-name: dockerhub-creds
 spec:
   project: default
   source:
-    repoURL: oci://registry-1.docker.io/bitnamicharts
-    chart: mysql
+    repoURL: registry-1.docker.io
+    chart: bitnamicharts/mysql
     targetRevision: 14.1.2
     helm:
       valueFiles:
