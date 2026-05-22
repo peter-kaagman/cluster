@@ -4,3 +4,4 @@ resources:
   - ingressroute-argocd.yaml
   - application-mysql.yaml
   - application-traefik.yaml
+  - middleware-forwarded-headers.yaml
