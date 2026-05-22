@@ -1,9 +1,31 @@
 auth:
+
   existingSecret: mysql-root-password
   rootPasswordKey: password
+  database: happyminds
+  username: happyminds
+  existingSecretUser: mysql-happyminds-secret
+  usernameKey: username
+  passwordKey: password
+
 primary:
   persistence:
     enabled: true
     size: 8Gi
+    mountPath: /var/lib/mysql
+
 image:
-  tag: 8.0.36-debian-12-r0
+  registry: docker.io
+  repository: peterkaagman/mysql
+  tag: "8.4.9@sha256:14690274f4967ba207939c97dd79a8d6604f1d532218ea6be69c0001ddd2d45f"
+
+architecture: standalone
+
+customLivenessProbe:
+  exec:
+    command:
+      - mysqladmin
+      - ping
+      - -h
+      - localhost
+
