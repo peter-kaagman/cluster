@@ -13,8 +13,9 @@ spec:
         - name: forwarded-headers
           namespace: argocd
       services:
-        - name: argocd-server
-          port: 80
-          scheme: http
+      - name: argocd-server
+        port: 443
+        scheme: https
+        insecureSkipVerify: true
   tls:
     certResolver: letsencrypt
