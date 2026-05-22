@@ -1,7 +1,6 @@
 # Kustomization voor ArgoCD App-of-Apps patroon
 resources:
   - application-argocd.yaml
-  - ingressroute-argocd.yaml
+  - ingress-argocd.yaml
   - application-mysql.yaml
   - application-traefik.yaml
-  - middleware-forwarded-headers.yaml
