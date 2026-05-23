@@ -2,6 +2,7 @@
 resources:
   - application-argocd.yaml
   - ingress-argocd.yaml
+  - middleware-https-redirect.yaml
   - application-mysql.yaml
   - application-traefik.yaml
   - application-cert-manager.yaml

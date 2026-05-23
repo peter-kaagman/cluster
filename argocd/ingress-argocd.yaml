@@ -6,7 +6,8 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.middlewares: argocd-redirect-to-https@kubernetescrd
 spec:
   tls:
     - hosts:
@@ -16,6 +17,14 @@ spec:
     - host: argocd.prjv.nl
       http:
         paths:
+          # Exclude ACME challenge path from redirect
+          - path: /.well-known/acme-challenge/
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  number: 80
           - path: /
             pathType: Prefix
             backend:
