@@ -1,8 +1,8 @@
 # Kustomization voor ArgoCD App-of-Apps patroon
 resources:
   - application-argocd.yaml
-  - ingress-argocd.yaml
-  - middleware-https-redirect.yaml
+  - ingress-argocd-nginx.yaml
   - application-mysql.yaml
-  - application-traefik.yaml
+  #- application-traefik.yaml
   - application-cert-manager.yaml
+  - application-nginx-ingress.yaml
