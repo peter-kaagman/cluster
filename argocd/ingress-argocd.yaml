@@ -17,14 +17,7 @@ spec:
     - host: argocd.prjv.nl
       http:
         paths:
-          # Exclude ACME challenge path from redirect
-          - path: /.well-known/acme-challenge/
-            pathType: Prefix
-            backend:
-              service:
-                name: argocd-server
-                port:
-                  number: 80
+          # Alleen reguliere routes, ACME challenge wordt apart afgehandeld
           - path: /
             pathType: Prefix
             backend:
