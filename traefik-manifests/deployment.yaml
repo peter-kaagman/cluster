@@ -22,17 +22,7 @@ spec:
           - --providers.kubernetescrd
           - --entrypoints.web.address=:80
           - --entrypoints.websecure.address=:443
-          - --certificatesresolvers.letsencrypt.acme.email=$(LETSENCRYPT_EMAIL)
-          - --certificatesresolvers.letsencrypt.acme.storage=/data/acme.json
-          - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
-          - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
           - --accesslog
-        env:
-        - name: LETSENCRYPT_EMAIL
-          valueFrom:
-            secretKeyRef:
-              name: traefik-acme-email
-              key: email
         ports:
         - name: web
           containerPort: 80
@@ -42,10 +32,3 @@ spec:
           hostPort: 443
         - name: admin
           containerPort: 8080
-        volumeMounts:
-        - name: acme-storage
-          mountPath: /data
-      volumes:
-      - name: acme-storage
-        persistentVolumeClaim:
-          claimName: traefik-acme-pvc
