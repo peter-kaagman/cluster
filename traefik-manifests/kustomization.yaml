@@ -1,9 +1,0 @@
-resources:
-  - namespace.yaml
-  - serviceaccount.yaml
-  - clusterrole.yaml
-  - clusterrolebinding.yaml
-  - deployment.yaml
-  - service.yaml
-  - traefik-acme-pvc.yaml
- 

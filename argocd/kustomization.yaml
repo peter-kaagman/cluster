@@ -3,6 +3,5 @@ resources:
   - application-argocd.yaml
   - ingress-argocd-nginx.yaml
   - application-mysql.yaml
-  #- application-traefik.yaml
   - application-cert-manager.yaml
   - application-nginx-ingress.yaml
