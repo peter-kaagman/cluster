@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mysite
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/peter-kaagman/cluster.git'
+    targetRevision: main
+    path: mysite
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mysite
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+  info:
+    - name: Maintainer
+      value: Peter Kaagman

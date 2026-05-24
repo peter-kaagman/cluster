@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysite
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysite
+  template:
+    metadata:
+      labels:
+        app: mysite
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: mysite
+          image: ghcr.io/peter-kaagman/mysite:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          env:
+            - name: PLACK_ENV
+              value: "production"
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mysite-secrets
+                  key: GOOGLE_CLIENT_ID
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mysite-secrets
+                  key: GOOGLE_CLIENT_SECRET
+            - name: GITHUB_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mysite-secrets
+                  key: GITHUB_CLIENT_ID
+            - name: GITHUB_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mysite-secrets
+                  key: GITHUB_CLIENT_SECRET
+          volumeMounts:
+            - name: db
+              mountPath: /app/db
+            - name: logs
+              mountPath: /app/logs
+            - name: images
+              mountPath: /app/public/images
+      volumes:
+        - name: db
+          persistentVolumeClaim:
+            claimName: mysite-db-pvc
+        - name: logs
+          persistentVolumeClaim:
+            claimName: mysite-logs-pvc
+        - name: images
+          persistentVolumeClaim:
+            claimName: mysite-images-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysite-service
+spec:
+  selector:
+    app: mysite
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: ClusterIP            

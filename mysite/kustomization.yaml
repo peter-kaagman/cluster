@@ -1,0 +1,7 @@
+resources:
+  - db-pvc.yaml
+  - logs-pvc.yaml
+  - images-pvc.yaml
+  - memcached-deployment.yaml
+  - deployment.yaml
+  # Voeg hier eventueel service, ingress, enz. toe
