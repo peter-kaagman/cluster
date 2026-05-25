@@ -1,0 +1,10 @@
+{
+  "auths": {
+    "ghcr.io": {
+      "username": "username",
+      "password": "PAT token",
+      "email": "email",
+      "auth": "base64(username:password)"
+    }
+  }
+}

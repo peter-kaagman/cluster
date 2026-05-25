@@ -18,43 +18,58 @@ Deze repo komt sowieso zonder ook maar een enkele garantie op correctheid of zel
 ## Projectstructuur
 - `argocd/` : ArgoCD App-of-Apps, applicatie manifests
 - `cert-manager/` : ClusterIssuer en andere cert-manager resources (niet de controller zelf)
-- `traefik-manifests/` : Traefik deployment, service, RBAC, etc.
-- `secrets/` : (Bootstrap) secrets die niet declaratief kunnen of mogen
+- `nginx-ingress/` : NGINX Ingress controller deployment, service, RBAC, etc.
+- `bootstrap/` : Cluster-brede resources en secrets die vóór ArgoCD uitgerold moeten worden.
+- `mysite/` : MySite applicatie, deployment, service, ingress, PVC's, enz.
 - `mysql-manifests/` : MySQL deployment, service, PVC, etc.
 
 ## Bootstrap/afhankelijkheden buiten ArgoCD
 Deze onderdelen moeten handmatig of via een apart bootstrap-proces worden uitgerold vóórdat ArgoCD alles kan beheren:
 
-- **CRDs van operators**
+**CRDs van operators**
   - cert-manager CRDs
-  - Traefik CRDs (indien nodig)
   - ArgoCD CRDs (indien nodig)
-- **Cluster-brede controllers/operators**
+**Cluster-brede controllers/operators**
   - cert-manager controller (namespace: cert-manager)
   - ArgoCD zelf (App-of-Apps)
-  - Traefik (optioneel, kan ook via ArgoCD)
-- **Bootstrap secrets**
-  - Registry secrets, eerste admin wachtwoord, etc. (optioneel)
-- **StorageClass/Persistent Volumes**
+  - NGINX Ingress controller (vervangt Traefik, 1 replica met hostPort 80/443)
+**IngressClass resource**
+  - Vereist voor NGINX Ingress, declaratief in `bootstrap/`
+**Bootstrap secrets**
+  - Registry secrets, eerste admin wachtwoord, etc. (optioneel, declaratief in `bootstrap/`)
+**StorageClass/Persistent Volumes**
   - Moeten vooraf aanwezig zijn als je PVC's gebruikt
-- **Netwerkcomponenten**
+**Netwerkcomponenten**
   - CNI, MetalLB, etc. (indien van toepassing)
 
 ## Volledig door ArgoCD beheerde resources
 - ClusterIssuer (cert-manager/clusterissuer-letsencrypt-prod.yaml)
 - ArgoCD zelf (argocd/application-*.yaml)
 - Alle applicaties, deployments, services, ingress, enz.
+  - MySite applicatie (mysite/)
+  - MySQL applicatie (mysql/)
 
 ## Installatievolgorde
 1. **Installeer CRDs**
-   - cert-manager: `kubectl apply --validate=false -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.crds.yaml`
+  - cert-manager: `kubectl apply --validate=false -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.crds.yaml`
 2. **Installeer cluster-operators/controllers**
-   - cert-manager: via Helm of manifest
-   - ArgoCD: via manifest of Helm
-   - Traefik: via manifest of Helm (optioneel)
-3. **(Optioneel) Maak bootstrap secrets aan**
-4. **Sync ArgoCD App-of-Apps**
-   - ArgoCD neemt nu het beheer over alle declaratieve resources over
+  - cert-manager: via Helm of manifest
+  - ArgoCD: via manifest of Helm
+  - NGINX Ingress controller: via manifest (1 replica, hostPort 80/443)
+3. **Maak IngressClass resource aan**
+  - Zie `bootstrap/IngressClassResource.yaml`
+4. **(Optioneel) Maak bootstrap secrets aan**
+  - Zie `bootstrap/`
+5. **Sync ArgoCD App-of-Apps**
+  - ArgoCD neemt nu het beheer over alle declaratieve resources over
+
+## Overige belangrijke best practices, checklist.
+- Cert-manager is de standaard voor Let's Encrypt TLS-certificaten (ClusterIssuer, Certificate, automatische vernieuwing)
+- IngressClass resource is verplicht voor NGINX Ingress (spec.ingressClassName)
+- Rolling updates zijn ingesteld voor MySite (en andere Deployments)
+- Slechts één nginx-ingress-controller pod met hostPort op single-node clusters (oude pod eerst verwijderen bij update)
+- Secrets en cluster-brede resources declaratief in `bootstrap/`, applicatie-specifiek in eigen map
+- MySite is toegevoegd als consumer van het cluster (eigen namespace, Ingress, PVC's, secrets)
 
 ## Testen van een schone uitrol
 - Volg bovenstaande volgorde op een nieuw cluster
@@ -87,8 +102,24 @@ Deze onderdelen moeten handmatig of via een apart bootstrap-proces worden uitger
   De in de repo opgenomen manifesten bevatten placeholders. De 'productie' versie van deze folder staat om veiligheidsredenen buiten de repo, moet dan ook separaat een backup van gemaakt worden.
   Secrets staan over het algemeen base64 encoded in het manifest: `echo -n "string"|base64 --encode`. Dit is uiteraard niet echt een beveiliging, iedereen kan die strings weer de-coderen.
 
-- **mysql-manifests/**  
-  Bevat een MySQL database deployment. Dit is een voorbeeld van een stateful applicatie in het cluster, maar is niet per se een vast onderdeel van de cluster-infrastructuur. Kan gebruikt worden door andere applicaties als backend database.
+- **mysql/**  
+  Bevat een MySQL database deployment. Dit is een voorbeeld van een stateful applicatie in het cluster, maar is niet per se een vast onderdeel van de cluster-infrastructuur. 
+  MySQL is niet persé een onderdeel van het cluster, het heeft daar geen rol in. Het is echter ook geen endpoint. Het is meer een soort van middleware om een database te kunnen bieden aan andere apps, specifiek een Wordpress site die ik nog moet verhuizen naar deze cluster. De server is al voorbereid op een database voor deze site.
+
+- **mysite/**
+  Bevat een Perl/Dancer2 applicatie (mijn site). Dit is een consumer van het cluster, de buitenwereld komt hiermee in aanraking. Door het gebruik van drie PVCs is hij stateful gemaakt. Het image voor de applicatie is afkomstig uit een eigen repository.
+  Het bestand 'bootstrap/ghrc.json' is een template: de inhoud hiervan gebruik je om het .dockerconfigjson secret te genereren voor GHCR toegang.
+  Het Personal Access Token (PAT) voor GHCR maak je in GitHub met minimaal het recht "read:packages".
+  Je maakt het secret bijvoorbeeld zo:
+  ```
+  kubectl create secret docker-registry ghcr-secret \
+    --docker-server=ghcr.io \
+    --docker-username=<github-username> \
+    --docker-password=<github-pat> \
+    --docker-email=<email> \
+    --namespace=mysite
+  ```
+  Of maak een .dockerconfigjson bestand en base64 encode deze voor het manifest.
 
 ---
 
