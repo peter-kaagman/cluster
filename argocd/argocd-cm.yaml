@@ -5,11 +5,11 @@ metadata:
   namespace: argocd
 data:
   # Standaard instellingen voor ArgoCD
-  url: https://argocd.example.com
+  url: https://argocd.prjv.nl
   admin.enabled: "true"
   # Voeg hier je repositories toe indien nodig
-  # repositories: |
-  #   - url: https://github.com/your-org/your-repo.git
+  repositories: |
+    - url: https://github.com/peter-kaagman/cluster
   # Voeg hier je custom health checks toe indien gewenst
   resource.customizations.health.networking.k8s.io_Ingress: |
     hs = {}
