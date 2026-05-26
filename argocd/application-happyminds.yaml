@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/peter-kaagman/cluster.git'
     targetRevision: main
-    path: cluster/happyminds
+    path: happyminds
   destination:
     server: https://kubernetes.default.svc
     namespace: happyminds
