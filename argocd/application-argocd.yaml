@@ -9,6 +9,9 @@ spec:
     repoURL: git@github.com:peter-kaagman/cluster.git
     targetRevision: main
     path: argocd
+    helm:
+      valueFiles:
+        - values-insecure.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
