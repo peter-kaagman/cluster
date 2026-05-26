@@ -6,3 +6,4 @@ resources:
   - application-cert-manager.yaml
   - application-nginx-ingress.yaml
   - application-mysite.yaml
+  - application-happyminds.yaml

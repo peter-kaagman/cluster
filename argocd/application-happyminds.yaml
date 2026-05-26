@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: happyminds
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/peter-kaagman/cluster.git'
+    targetRevision: main
+    path: cluster/happyminds
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: happyminds
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
