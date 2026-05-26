@@ -3,9 +3,9 @@ resources:
   - application-argocd.yaml
   - ingress-argocd-nginx.yaml
   # - argocd-cm-ingress-health-patch.yaml
-  - argocd-cm.yaml
-  - apps/application-mysql.yaml
-  - apps/application-cert-manager.yaml
-  - apps/application-nginx-ingress.yaml
-  - apps/application-mysite.yaml
-  - apps/application-happyminds.yaml
+  # - argocd-cm.yaml
+  # - apps/application-mysql.yaml
+  # - apps/application-cert-manager.yaml
+  # - apps/application-nginx-ingress.yaml
+  # - apps/application-mysite.yaml
+  # - apps/application-happyminds.yaml
