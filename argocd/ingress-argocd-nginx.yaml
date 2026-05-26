@@ -11,7 +11,7 @@ metadata:
     nginx.ingress.kubernetes.io/auth-secret: "argocd-basic-auth"
     nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
     # Let op: basic-auth werkt alleen op HTTP/HTTPS, niet op gRPC endpoints
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
   tls:
     - hosts:
