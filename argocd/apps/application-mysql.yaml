@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/peter-kaagman/cluster.git
-    path: mysql-manifests
+    path: mysql
     targetRevision: main
   destination:
     server: https://kubernetes.default.svc
