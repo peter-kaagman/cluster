@@ -1,3 +1,14 @@
+## ArgoCD installatie via officiële manifesten
+
+Voor de eerste installatie van ArgoCD wordt de officiële install.yaml van het ArgoCD-project gebruikt als bootstrap-stap:
+
+```
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+Hiermee worden alle benodigde ArgoCD componenten en CRDs uitgerold. Zodra ArgoCD draait, neemt het beheer van de rest van het cluster over via de App-of-Apps aanpak en declaratieve manifests in deze repository. Eventuele aanpassingen aan ArgoCD zelf (zoals configmaps, RBAC, etc.) worden daarna via GitOps beheerd.
+
+Het is aan te raden deze stap te documenteren en alleen bij een nieuwe clusterinstallatie uit te voeren. Daarna is alles volledig GitOps-gedreven.
 # Mprjv65
 
 Deze repository is onderdeel van mijn persoonlijke leertraject Mprjv65. Het project is er op gericht een volledige cloudstack te maken met opensource tooling. De repository gaat voornamelijk over de laag orkestratie en kubernetes. Wat ik in mijn gedachten en artikelen laag 2 ben gaan noemen. 
