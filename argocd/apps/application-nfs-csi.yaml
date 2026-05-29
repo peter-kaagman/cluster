@@ -13,7 +13,9 @@ spec:
       releaseName: nfs-csi-driver
       values: |
         controller:
-          runOnControlPlane: true
+          runOnControlPlane: false
+          nodeSelector: {}
+          tolerations: []
         node:
           runOnControlPlane: true
   destination:
