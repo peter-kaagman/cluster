@@ -55,6 +55,8 @@ spec:
               mountPath: /app/logs
             - name: images
               mountPath: /app/public/images
+      securityContext:
+        fsGroup: 1000
       volumes:
         - name: db
           persistentVolumeClaim:
