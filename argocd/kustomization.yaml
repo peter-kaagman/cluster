@@ -5,5 +5,5 @@ resources:
   - apps/application-mysql.yaml
   - apps/application-cert-manager.yaml
   - apps/application-nginx-ingress.yaml
-  # - apps/application-mysite.yaml
+  - apps/application-mysite.yaml
   - apps/application-happyminds.yaml
