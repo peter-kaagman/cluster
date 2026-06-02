@@ -7,12 +7,14 @@ spec:
   selector:
     matchLabels:
       app: wordpress-happyminds
-  replicas: 1
+  replicas: 0
   template:
     metadata:
       labels:
         app: wordpress-happyminds
     spec:
+      securityContext:
+        fsGroup: 33
       containers:
         - name: wordpress
           image: wordpress:6.9.4
