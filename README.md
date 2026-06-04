@@ -1,143 +1,203 @@
-## ArgoCD installatie via officiële manifesten
 
-Voor de eerste installatie van ArgoCD wordt de officiële install.yaml van het ArgoCD-project gebruikt als bootstrap-stap:
+# Kubernetes Cluster – Runbook / GitOps Setup
+Doel van dit document
+Dit document beschrijft hoe dit cluster opnieuw opgebouwd kan worden op een nieuwe VM.
+Het doel is:
 
-```
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-```
+**een werkend k3s cluster opzetten**
+de minimale bootstrap-stappen uitvoeren
+daarna ArgoCD het cluster laten beheren (GitOps)
 
-Hiermee worden alle benodigde ArgoCD componenten en CRDs uitgerold. Zodra ArgoCD draait, neemt het beheer van de rest van het cluster over via de App-of-Apps aanpak en declaratieve manifests in deze repository. Eventuele aanpassingen aan ArgoCD zelf (zoals configmaps, RBAC, etc.) worden daarna via GitOps beheerd.
+Het doel is niet een volledig declaratief model, maar een reproduceerbare opbouw waarbij duidelijk is:
+wat handmatig moet
+wat door GitOps beheerd wordt
+waar de beperkingen zitten
 
-Het is aan te raden deze stap te documenteren en alleen bij een nieuwe clusterinstallatie uit te voeren. Daarna is alles volledig GitOps-gedreven.
-# Mprjv65
 
-Deze repository is onderdeel van mijn persoonlijke leertraject Mprjv65. Het project is er op gericht een volledige cloudstack te maken met opensource tooling. De repository gaat voornamelijk over de laag orkestratie en kubernetes. Wat ik in mijn gedachten en artikelen laag 2 ben gaan noemen. 
+## Architectuur (globaal)
+Git (repo)
+  ↓
+ArgoCD
+  ↓
+k3s cluster
+  ├─ applicaties (mysite, mysql)
+  ├─ infrastructuur resources
+  └─ ingress / TLS
 
-Mprjv65 is dus niet het simpelweg neerzetten van een NexCloud All In One container in docker, maar gaat in op alle lagen vanaf het fysieke datacentrum tot inderdaad applicaties als NextCloud. Verwacht geen blueprint te vinden voor het opzetten van een cluster, het belangrijkste doel is leren.
+Bootstrap (buiten GitOps):
+  ├─ CRDs
+  ├─ controllers (cert-manager, ingress)
+  ├─ ArgoCD zelf (initieel)
+  └─ initiële secrets / storage
 
-Op mijn site https://mysite.prjv.nl/category/mprjv65 staat een reeks artikelen over dit onderwerp. 
+ArgoCD is de centrale “controller” van de gewenste cluster state.
 
-# Kubernetes Cluster GitOps (ArgoCD) - Declaratieve Setup
+## Storage
+Het cluster gebruikt momenteel externe storage via NFS (Synology NAS).
+Implementatie
 
-Deze repository beschrijft een Kubernetes cluster op basis van GitOps met ArgoCD. Het doel is een zoveel mogelijk volledig declaratief, reproduceerbaar cluster, waarbij ArgoCD de regie voert over alle applicaties en infrastructuur. Er zijn echter een aantal componenten die horen bij wat je de 'boorstrap' van het cluster zou kunnen noemen. Componenten die niet door ArgoCD of manifesten beheerd word. Deze afhankelijkheden probeer ik hieronder te benoemen.
+NFS share op Synology
+gebruikt als backend voor PVC’s (RWX)
+gekoppeld via StorageClass / PV
+
+Eigenschappen
++ eenvoudig
++ centraal beheer
++ geschikt voor RWX workloads
+
+Beperkingen
+- single point of failure (NAS)
+- geen HA op cluster-niveau
+- afhankelijk van netwerk/NAS beschikbaarheid
+
+Consequentie
+Bij uitval van de NAS:
+→ alle stateful workloads stoppen
+
+Toekomstige opties (nog niet geïmplementeerd)
+
+distributed storage (Longhorn / Ceph)
+HA op NAS-niveau (replication / HA cluster)
+
+
+## Bootstrap (niet door ArgoCD beheerd)
+Deze onderdelen moeten aanwezig zijn voordat ArgoCD het cluster kan beheren.
+1. CRDs
+cert-manager CRDs
+ArgoCD CRDs (indien nodig)
+
+2. Controllers / operators
+
+cert-manager controller
+ArgoCD (initieel)
+NGINX ingress controller
+
+3. Netwerk
+
+CNI (default k3s)
+eventueel MetalLB (indien gebruikt)
+
+4. Storage
+
+NFS server bereikbaar
+StorageClass beschikbaar
+
+5. Bootstrap secrets
+
+registry credentials (GHCR)
+initiële wachtwoorden
+
+
+## Rebuild stappen (samenvatting)
+Dit is de “happy path”.
+1. Installeer k3s op nieuwe VM
+
+2. Installeer cert-manager CRDs
+   kubectl apply --validate=false -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.crds.yaml
+
+3. Deploy cert-manager controller
+
+4. Deploy ArgoCD (initieel)
+   kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+5. Deploy NGINX ingress controller
+
+6. Maak IngressClass resource aan
+   (bootstrap/IngressClassResource.yaml)
+
+7. Maak bootstrap secrets
+   (registry, etc.)
+
+8. Configureer storage (NFS / PV / StorageClass)
+
+9. Deploy ArgoCD App-of-Apps
+
+10. Controle:
+   - ArgoCD: synced + healthy
+   - ingress werkt
+   - certificaten worden uitgegeven
+
+Vanaf stap 9 geldt:
+ArgoCD is de baas
+handmatige wijzigingen worden overschreven
+
+
+## Volledig door ArgoCD beheerd
+Na bootstrap:
+
+applicaties
+deployments
+services
+ingress resources
+ClusterIssuer (cert-manager)
+ArgoCD config
+
+
+## Componenten
+`argocd/`
+App-of-Apps setup. Stuurt alle andere componenten aan.
+
+`cert-manager/`
+ClusterIssuer voor Let’s Encrypt.
+Controller zelf wordt buiten ArgoCD geïnstalleerd.
+
+`nginx-ingress/`
+Ingress controller. Regelt extern verkeer.
+Single replica met hostPort (single-node scenario).
+
+`mysql/`
+Stateful workload (voorbeeld / middleware).
+Niet essentieel voor cluster zelf.
+
+`mysite/`
+Perl/Dancer2 applicatie (consumer van cluster).
+
+gebruikt PVC’s (stateful)
+vereist GHCR credentials
+
+
+`bootstrap/`
+Cluster-brede resources:
+
+IngressClass
+initiële secrets
+templates
+
+
+## Workflow (GitOps)
+1. Wijziging in Git
+2. Commit / push
+3. ArgoCD detecteert wijziging
+4. Sync naar cluster
+
+Auto-sync aan:
+→ cluster volgt Git
+→ handmatige wijzigingen verdwijnen
+
+
+## Beperkingen / risico's
+- storage is extern en niet HA
+- bootstrap is deels handmatig
+- reproduceerbaarheid niet volledig getest
+- afhankelijkheden buiten Git (CRDs / controllers)
+
+
+## Context (Mprjv65)
+Deze repository is onderdeel van het Mprjv65 project:
+
+doel: volledige cloudstack begrijpen
+focus: orkestratielaag (kubernetes)
+
+Het project is geen blueprint maar een leertraject.
+Artikelen:
+https://mysite.prjv.nl/category/mprjv65
 
 ## Disclaimer
-Deze repo komt sowieso zonder ook maar een enkele garantie op correctheid of zelfs gezond verstand. Maar ik heb op dit moment de reproduceerbaarheid van wat hier staan ook niet getest. Zoals je misschien hieronder kun zien maak ik veelvuldig gebruik van GH CoPilot als mentor, en die wil zich nog wel eens vergissen of gewoon belangrijke zaken niet noement. Zoals ik zei: het is mijn leerweg.
+Deze repository is een werkinstrument binnen een leertraject.
+Er zijn geen garanties op:
 
----
+- correctheid
+- volledigheid
+- reproduceerbaarheid
 
-## Projectstructuur
-- `argocd/` : ArgoCD App-of-Apps, applicatie manifests
-- `cert-manager/` : ClusterIssuer en andere cert-manager resources (niet de controller zelf)
-- `nginx-ingress/` : NGINX Ingress controller deployment, service, RBAC, etc.
-- `bootstrap/` : Cluster-brede resources en secrets die vóór ArgoCD uitgerold moeten worden.
-- `mysite/` : MySite applicatie, deployment, service, ingress, PVC's, enz.
-- `mysql-manifests/` : MySQL deployment, service, PVC, etc.
-
-## Bootstrap/afhankelijkheden buiten ArgoCD
-Deze onderdelen moeten handmatig of via een apart bootstrap-proces worden uitgerold vóórdat ArgoCD alles kan beheren:
-
-**CRDs van operators**
-  - cert-manager CRDs
-  - ArgoCD CRDs (indien nodig)
-**Cluster-brede controllers/operators**
-  - cert-manager controller (namespace: cert-manager)
-  - ArgoCD zelf (App-of-Apps)
-  - NGINX Ingress controller (vervangt Traefik, 1 replica met hostPort 80/443)
-**IngressClass resource**
-  - Vereist voor NGINX Ingress, declaratief in `bootstrap/`
-**Bootstrap secrets**
-  - Registry secrets, eerste admin wachtwoord, etc. (optioneel, declaratief in `bootstrap/`)
-**StorageClass/Persistent Volumes**
-  - Moeten vooraf aanwezig zijn als je PVC's gebruikt
-**Netwerkcomponenten**
-  - CNI, MetalLB, etc. (indien van toepassing)
-
-## Volledig door ArgoCD beheerde resources
-- ClusterIssuer (cert-manager/clusterissuer-letsencrypt-prod.yaml)
-- ArgoCD zelf (argocd/application-*.yaml)
-- Alle applicaties, deployments, services, ingress, enz.
-  - MySite applicatie (mysite/)
-  - MySQL applicatie (mysql/)
-
-## Installatievolgorde
-1. **Installeer CRDs**
-  - cert-manager: `kubectl apply --validate=false -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.crds.yaml`
-2. **Installeer cluster-operators/controllers**
-  - cert-manager: via Helm of manifest
-  - ArgoCD: via manifest of Helm
-  - NGINX Ingress controller: via manifest (1 replica, hostPort 80/443)
-3. **Maak IngressClass resource aan**
-  - Zie `bootstrap/IngressClassResource.yaml`
-4. **(Optioneel) Maak bootstrap secrets aan**
-  - Zie `bootstrap/`
-5. **Sync ArgoCD App-of-Apps**
-  - ArgoCD neemt nu het beheer over alle declaratieve resources over
-
-## Overige belangrijke best practices, checklist.
-- Cert-manager is de standaard voor Let's Encrypt TLS-certificaten (ClusterIssuer, Certificate, automatische vernieuwing)
-- IngressClass resource is verplicht voor NGINX Ingress (spec.ingressClassName)
-- Rolling updates zijn ingesteld voor MySite (en andere Deployments)
-- Slechts één nginx-ingress-controller pod met hostPort op single-node clusters (oude pod eerst verwijderen bij update)
-- Secrets en cluster-brede resources declaratief in `bootstrap/`, applicatie-specifiek in eigen map
-- MySite is toegevoegd als consumer van het cluster (eigen namespace, Ingress, PVC's, secrets)
-
-## Testen van een schone uitrol
-- Volg bovenstaande volgorde op een nieuw cluster
-- Controleer of alles "in sync" en "healthy" wordt in ArgoCD
-- Controleer of alle certificaten, ingress, en applicaties automatisch worden uitgerold
-
----
-
-**Let op:**
-- Sommige resources (zoals CRDs en cluster-operators) zijn lastig volledig declaratief te beheren met alleen ArgoCD. Overweeg een bootstrap-script of een App-of-Apps setup voor operators als je volledige GitOps wilt.
-- Documenteer altijd handmatige stappen en afhankelijkheden in deze README.
-
----
-
-
-## Componenten & Doel
-
-- **argocd/**  
-  Bevat de ArgoCD App-of-Apps setup en de declaratie van alle applicaties die door ArgoCD beheerd worden. Dit is het centrale GitOps-regiepunt van het cluster.
-
-- **cert-manager/**  
-  Bevat resources voor cert-manager, zoals de ClusterIssuer voor Let's Encrypt. Hiermee worden automatisch TLS-certificaten uitgegeven voor Ingress resources. Let op: de cert-manager controller zelf wordt buiten ArgoCD om geïnstalleerd.
-
-- **traefik-manifests/**  
-  Bevat de manifests voor Traefik, de Ingress-controller van het cluster. Regelt de routing van extern verkeer naar de juiste services binnen het cluster.
-
-- **secrets/**  
-  Bevat (bootstrap) secrets die niet declaratief kunnen of mogen worden beheerd, bijvoorbeeld initiale wachtwoorden of registry credentials.
-  In het manifest wordt ook de namespace van de applicatie gemaakt omdat het secret bij de namespace hoort.
-  De in de repo opgenomen manifesten bevatten placeholders. De 'productie' versie van deze folder staat om veiligheidsredenen buiten de repo, moet dan ook separaat een backup van gemaakt worden.
-  Secrets staan over het algemeen base64 encoded in het manifest: `echo -n "string"|base64 --encode`. Dit is uiteraard niet echt een beveiliging, iedereen kan die strings weer de-coderen.
-
-- **mysql/**  
-  Bevat een MySQL database deployment. Dit is een voorbeeld van een stateful applicatie in het cluster, maar is niet per se een vast onderdeel van de cluster-infrastructuur. 
-  MySQL is niet persé een onderdeel van het cluster, het heeft daar geen rol in. Het is echter ook geen endpoint. Het is meer een soort van middleware om een database te kunnen bieden aan andere apps, specifiek een Wordpress site die ik nog moet verhuizen naar deze cluster. De server is al voorbereid op een database voor deze site.
-
-- **mysite/**
-  Bevat een Perl/Dancer2 applicatie (mijn site). Dit is een consumer van het cluster, de buitenwereld komt hiermee in aanraking. Door het gebruik van drie PVCs is hij stateful gemaakt. Het image voor de applicatie is afkomstig uit een eigen repository.
-  Het bestand 'bootstrap/ghrc.json' is een template: de inhoud hiervan gebruik je om het .dockerconfigjson secret te genereren voor GHCR toegang.
-  Het Personal Access Token (PAT) voor GHCR maak je in GitHub met minimaal het recht "read:packages".
-  Je maakt het secret bijvoorbeeld zo:
-  ```
-  kubectl create secret docker-registry ghcr-secret \
-    --docker-server=ghcr.io \
-    --docker-username=<github-username> \
-    --docker-password=<github-pat> \
-    --docker-email=<email> \
-    --namespace=mysite
-  ```
-  Of maak een .dockerconfigjson bestand en base64 encode deze voor het manifest.
-
----
-
-# Workflow
-ArgoCD is in princiepe de baas over de componenten. Die vertel je welke repo (GitHub of een andere) hij moet monitoren. Indien auto-sync aanstaat, wat default het geval is, dan zal ArgoCD na een commit/push automatisch de wijzigingen deployen.
-Handmatige aanpassingen zullen dan ook verloren gaan
-
----
-
-Vragen of bijdragen? Open een issue of maak een pull request! Weet je wat? Je kun mij ook gewoon mailen. Mijn email adres staat in het manifest van de cluster issuer ;)
+Gebruik op eigen risico.
