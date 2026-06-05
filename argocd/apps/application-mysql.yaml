@@ -3,6 +3,12 @@ kind: Application
 metadata:
   name: mysql-server
   namespace: argocd
+  labels:
+    mprjv65/service: mysql
+    mprjv65/type: platform
+    mprjv65/role: database
+  annotations:
+    mprjv65/owner: team-data
 spec:
   project: default
   source:

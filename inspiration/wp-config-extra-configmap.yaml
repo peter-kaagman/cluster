@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wp-config-extra
+  namespace: inspiration
+data:
+  wp-config-extra.php: |
+    <?php
+    // Force HTTPS when behind Ingress or reverse proxy
+    if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+        $_SERVER['HTTPS'] = 'on';
+    }

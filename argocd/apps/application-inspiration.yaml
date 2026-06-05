@@ -1,12 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: mysite
+  name: inspiration
   namespace: argocd
   labels:
-    mprjv65/service: mysite
+    mprjv65/service: inspiration
     mprjv65/type: service
     mprjv65/role: frontend
+    mprjv65/depends_on: mysql
   annotations:
     mprjv65/owner: team-web
 spec:
@@ -14,16 +15,13 @@ spec:
   source:
     repoURL: 'https://github.com/peter-kaagman/cluster.git'
     targetRevision: main
-    path: mysite
+    path: inspiration
   destination:
     server: https://kubernetes.default.svc
-    namespace: mysite
+    namespace: inspiration
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-  info:
-    - name: Maintainer
-      value: Peter Kaagman

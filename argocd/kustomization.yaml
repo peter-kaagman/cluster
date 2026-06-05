@@ -7,3 +7,4 @@ resources:
   - apps/application-nginx-ingress.yaml
   - apps/application-mysite.yaml
   - apps/application-happyminds.yaml
+  - apps/application-inspiration.yaml
