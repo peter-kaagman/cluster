@@ -23,6 +23,7 @@ Workloads -> Fluent Bit -> Loki -> Grafana
 - lage cardinality labels
 - data-aware velden in payload (niet als label)
 - logging is een contract, geen best effort
+- validatie gebeurt in runbook / oplevercriteria, niet als pipeline-transform
 
 ---
 
@@ -53,6 +54,10 @@ Workloads -> Fluent Bit -> Loki -> Grafana
 - request_id
 - trace_id
 
+### Label fallback
+- labels worden alleen gebruikt als ze stabiel en aanwezig zijn
+- ontbrekende labelwaarden worden genormaliseerd of expliciet als `unknown` behandeld
+
 ---
 
 ## Data-aware logmodel
@@ -76,6 +81,11 @@ Workloads -> Fluent Bit -> Loki -> Grafana
 - request_id (verplicht voor app logs)
 - trace_id (optioneel, future tracing)
 
+### Gevoelige data
+- secrets: altijd maskeren of verwijderen
+- PII: contextafhankelijk redacten
+- operationele context: bij voorkeur behouden
+
 ---
 
 ## Logging contract (minimaal)
@@ -97,6 +107,7 @@ Data-aware logging:
 Fallback gedrag:
 - ontbrekende velden worden gemarkeerd als "unknown"
 - ontbreken van request_id wordt gelogd als waarschuwing (policy breach), maar blokkeert ingest niet
+- labels mogen niet afhankelijk zijn van ongestructureerde of instabiele bronwaarden
 
 
 ---

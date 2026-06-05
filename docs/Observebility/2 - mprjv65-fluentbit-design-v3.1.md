@@ -8,7 +8,9 @@ met data-aware verrijking en gecontroleerde resource usage.
 
 ## Pipeline
 
-INPUT -> PARSE -> FILTER -> ENRICH -> BUFFER -> OUTPUT
+RAW -> MULTILINE -> PARSE -> FILTER -> REDACT -> LABEL -> ENRICH -> BUFFER -> OUTPUT
+
+Validatie hoort niet in de dataflow zelf; dat is een runbook- en opleverstap.
 
 ---
 
@@ -30,6 +32,8 @@ Voorkeur:
 - syslog parser
 - multiline (stacktraces)
 
+Multiline werkt alleen op de logvorm die na eerdere stappen nog beschikbaar is; volgorde en inputstructuur zijn dus bepalend.
+
 ---
 
 ## Filtering
@@ -41,6 +45,11 @@ Voorkeur:
   - token
   - api_key
 
+Redactie onderscheidt:
+- secrets: altijd maskeren of verwijderen
+- PII: alleen redacten als dat functioneel of juridisch nodig is
+- operationele context: bij voorkeur behouden
+
 ---
 
 ## Enrichment
@@ -51,6 +60,8 @@ Voorkeur:
 - app
 - component
 - level
+
+Labelwaarden moeten stabiel zijn; ontbrekende waarden worden genormaliseerd of als `unknown` gezet.
 
 ### Payload verrijking
 - namespace (altijd)
@@ -117,6 +128,13 @@ Gedrag:
 - Loki endpoint in observability namespace
 - JSON payload behouden
 - labels strikt beperken
+
+## Validatie
+
+- parser/grep gedrag expliciet testen met echte records
+- multiline test per logformat of app uitvoeren
+- redactie verifiëren op veldniveau
+- labels verifiëren op stabiliteit en cardinality
 
 ---
 

@@ -92,6 +92,7 @@ Gebruik:
 - DaemonSet op alle nodes
 - output naar Loki service
 - config volgt Fluent Bit design document
+- deployment volgt het expliciete pipeline-contract uit het Fluent Bit ontwerp
 
 ---
 
@@ -119,6 +120,10 @@ Gebruik:
 - Loki bereikbaar: /ready geeft HTTP 200 en een testquery geeft resultaat
 - logs zichtbaar in Grafana
 - geen crashloops
+- parser/grep gedrag moet aantoonbaar kloppen met echte records
+- multiline moet aantoonbaar 1 logisch event vormen per stacktrace of traceback
+- redactie moet op veldniveau verifieerbaar zijn
+- labels moeten stabiel en beperkt blijven; ontbrekende waarden moeten expliciet afgehandeld zijn
 
 ---
 
@@ -129,6 +134,7 @@ Controleren:
 - Fluent Bit retries
 - Loki ingest errors
 - backlog gedrag
+- semantische correctheid van logs, niet alleen beschikbaarheid
 
 Geen aparte monitoring stack vereist in startfase,
 maar zicht op fouten is verplicht.
