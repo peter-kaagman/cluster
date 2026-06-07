@@ -3,6 +3,12 @@ kind: Application
 metadata:
   name: cert-manager
   namespace: argocd
+  labels:
+    mprjv65/service: cert-manager
+    mprjv65/type: platform
+    mprjv65/role: controller
+  annotations:
+    mprjv65/owner: team-platform
 spec:
   project: default
   source:

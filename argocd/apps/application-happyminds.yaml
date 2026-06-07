@@ -7,7 +7,7 @@ metadata:
     mprjv65/service: happyminds
     mprjv65/type: service
     mprjv65/role: frontend
-    mprjv65/depends_on: mysql
+    mprjv65/depends_on: cert-manager:shared,mysql:shared,nginx-ingress:shared
   annotations:
     mprjv65/owner: team-web
 spec:

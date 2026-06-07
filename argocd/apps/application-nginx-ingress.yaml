@@ -3,6 +3,12 @@ kind: Application
 metadata:
   name: nginx-ingress
   namespace: argocd
+  labels:
+    mprjv65/service: nginx-ingress
+    mprjv65/type: edge
+    mprjv65/role: ingress
+  annotations:
+    mprjv65/owner: team-platform
 spec:
   project: default
   source:

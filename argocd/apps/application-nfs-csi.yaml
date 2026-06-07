@@ -3,6 +3,12 @@ kind: Application
 metadata:
   name: nfs-csi-driver
   namespace: argocd
+  labels:
+    mprjv65/service: nfs-csi-driver
+    mprjv65/type: infrastructure
+    mprjv65/role: storage
+  annotations:
+    mprjv65/owner: team-platform
 spec:
   project: default
   source:

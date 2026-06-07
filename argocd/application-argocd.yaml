@@ -3,6 +3,13 @@ kind: Application
 metadata:
   name: argocd
   namespace: argocd
+  labels:
+    mprjv65/service: argocd
+    mprjv65/type: platform
+    mprjv65/role: controller
+    mprjv65/depends_on: cert-manager:shared,nginx-ingress:shared
+  annotations:
+    mprjv65/owner: team-platform
 spec:
   project: default
   source:

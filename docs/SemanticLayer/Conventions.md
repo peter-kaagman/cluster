@@ -102,26 +102,53 @@ Specifieke functie binnen het type.
 
 ---
 
-## 4. depends_on (optioneel maar belangrijk)
+### 4. depends_on (optioneel maar belangrijk)
 
-Beschrijft logische afhankelijkheden tussen services.
+Beschrijft logische afhankelijkheden tussen services inclusief hun scope (relationele context).
 
-`mprjv65/depends_on=[,]`
+Formaat:
 
-### Voorbeelden
+mprjv65/depends_on=<service>:<scope>[,<service>:<scope>]
 
-`mprjv65/depends_on=mysql`
-`mprjv65/depends_on=mysql,redis`
+#### Voorbeelden
 
-### Regels
+mprjv65/depends_on=mysql:shared
+mprjv65/depends_on=mysql:shared
+mprjv65/depends_on=weather-api:external
+
+#### Regels
 
 - Gebruik canonical service namen
 - Alleen directe afhankelijkheden
 - Geen transitive dependencies modelleren
-- Waarden alfabetisch sorteren (deterministisch)
+- Iedere dependency MOET een scope hebben
+- Waarden alfabetisch sorteren op servicenaam (deterministisch)
 - Geen duplicaten
+- Geen spaties in de expressie
 - Maximaal 5 dependencies per service (startfase)
 - Als dit structureel te krap is: model uitbreiden, niet ad-hoc omzeilen
+- Services zonder dependencies mogen het label niet bevatten
+
+#### Scope definitie
+
+Scope beschrijft de aard van de dependency (de relatie tussen services), en is onderdeel van de dependency.
+
+De volgende waarden zijn toegestaan:
+
+- shared  
+  Resource binnen het cluster, gedeeld door meerdere services
+
+- external  
+  Resource buiten het cluster of buiten beheer (bijv. externe API)
+
+#### Belangrijke principes
+
+- Scope hoort bij de relatie, niet bij de service zelf
+- Een service kan meerdere dependencies hebben met verschillende scopes
+- Toegestane scopes zijn bewust beperkt tot: shared, external
+- `local` is gereserveerd voor een latere use-case, maar mag voorlopig niet gebruikt worden
+- Nieuwe scopes alleen toevoegen bij meerdere concrete use-cases (geen theoretische uitbreidingen)
+
 
 ---
 
@@ -178,7 +205,7 @@ metadata:
     mprjv65/service: wordpress
     mprjv65/type: service
     mprjv65/role: frontend
-    mprjv65/depends_on: mysql
+    mprjv65/depends_on: mysql:shared
   annotations:
     mprjv65/owner: team-web
 ```
@@ -211,7 +238,7 @@ metadata:
   labels:
     mprjv65/service: wordpress
     mprjv65/type: service
-    mprjv65/depends_on: mysql
+    mprjv65/depends_on: redis:shared,mysql:shared
   annotations:
     mprjv65/owner: team-web
 ```
@@ -250,7 +277,7 @@ metadata:
     mprjv65/service: wordpress
     mprjv65/type: service
     mprjv65/role: frontend
-    mprjv65/depends_on: mysql
+    mprjv65/depends_on: memcached:shared,mysql:shared
     mprjv65/criticality: medium
   annotations:
     mprjv65/owner: team-web
@@ -273,6 +300,12 @@ metadata:
     mprjv65/type: infrastructure
   annotations:
     mprjv65/owner: team-platform
+
+# Service zonder dependencies
+metadata:
+  labels:
+    mprjv65/service: standalone-service
+    mprjv65/type: service    
 ```
 
 ## Toekomstige uitbreidingen
@@ -299,8 +332,9 @@ Aanbevolen controles vóór merge:
 
 - `mprjv65/service` en `mprjv65/type` zijn verplicht
 - `mprjv65/service` is lowercase en canonical (geen varianten)
-- `mprjv65/depends_on` bevat alleen canonical service namen
+- `mprjv65/depends_on` bevat alleen canonical service namen met geldige scope in het format `service:scope`
 - `mprjv65/depends_on` is alfabetisch gesorteerd en zonder duplicaten
+- `mprjv65/depends_on` is optioneel, er kan ook geen dependency zijn 
 - owner staat bij voorkeur als annotation
 
 Start simpel:
@@ -310,29 +344,3 @@ Start simpel:
 
 ---
 
-# 👍 Kort commentaar (geen fluff)
-
-- Dit is klein genoeg om echt te gebruiken  
-- Groot genoeg om later AI-waarde te hebben  
-- Volledig declaratief → past bij jouw ontwerp  
-
-> en inderdaad: *“het vloeit geen bloed, het eet geen brood”*  
-> maar straks heb je ineens context waar je iets mee kan  
-
----
-
-## 1 kleine suggestie
-
-Als je dit gaat implementeren:
-
-Begin met alleen:
-
-- `service`
-- `type`
-- `depends_on`
-
-De rest komt vanzelf.
-
----
-
-Als je wilt kan ik daarna nog een **mini tool/flow schetsen** ("hoe leest een agent dit en doet queries") — dat is de volgende logische stap.
