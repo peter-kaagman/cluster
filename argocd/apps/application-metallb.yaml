@@ -27,3 +27,8 @@ spec:
   info:
     - name: Maintainer
       value: Peter Kaagman
+  ignoreDifferences:
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      jsonPointers:
+        - /spec/conversion/webhook/clientConfig/caBundle
