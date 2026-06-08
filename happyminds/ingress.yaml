@@ -9,17 +9,7 @@ metadata:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 
     nginx.ingress.kubernetes.io/configuration-snippet: |
-      if ($request_uri = "/xmlrpc.php") {
-        return 444;
-      }
-
-      if ($request_uri ~* "/wp-login.php") {
-        limit_req zone=wp burst=5 nodelay;
-      }
-
-      if ($request_uri ~* "/wp-admin/") {
-        limit_req zone=wp burst=10 nodelay;
-      }
+      limit_req zone=wp burst=5 nodelay;
 
 spec:
   ingressClassName: nginx
