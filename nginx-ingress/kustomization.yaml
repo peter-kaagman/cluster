@@ -2,3 +2,4 @@ resources:
   - namespace.yaml
   - nginx-ingress-controller.yaml
   - rbac-update-ingress-status.yaml
+  - nginx-configmap.yaml

@@ -32,6 +32,9 @@ spec:
             - --election-id=ingress-controller-leader
             - --controller-class=k8s.io/ingress-nginx
             - --ingress-class=nginx
+            - --configmap=$(POD_NAMESPACE)/nginx-ingress-controller
+            - --allow-snippet-annotations=true
+           
           env:
             - name: POD_NAME
               valueFrom:

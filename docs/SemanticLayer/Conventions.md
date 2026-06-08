@@ -154,7 +154,7 @@ De volgende waarden zijn toegestaan:
 
 ## 5. storage (optioneel)
 
-Storage backend (indien relevant).
+Semantische classificatie van de storage-gedragingen van een service.
 
 `mprjv65/storage=`
 
@@ -164,9 +164,31 @@ Storage backend (indien relevant).
 - `local`
 - `ceph`
 
-Opmerking:
-Veel storage-relaties zijn al af te leiden vanuit Kubernetes (PVC), dit veld is ondersteunend.
+### Doel
 
+Dit veld beschrijft de *karakteristiek* van storage
+vanuit het perspectief van de service:
+
+- performance eigenschappen (latency, throughput)
+- availability implicaties (shared vs node-local)
+- architectuurkeuzes
+
+### Belangrijk onderscheid
+
+De feitelijke storageconfiguratie (PVC, StorageClass, binding)
+is onderdeel van Kubernetes runtime state.
+
+Dit veld is geen duplicatie van die configuratie,
+maar een vereenvoudigde semantische representatie
+voor interpretatie en correlatie.
+
+### Relatie tot dependencies
+
+Storage is geen `depends_on` relatie.
+
+Reden:
+- storage backends zijn niet altijd gemodelleerd als services
+- storage is een eigenschap van een service, geen logische dependency tussen services
 ---
 
 ## 6. criticality (optioneel)

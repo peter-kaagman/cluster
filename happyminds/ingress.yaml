@@ -7,6 +7,23 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
+    nginx.ingress.kubernetes.io/server-snippet: |
+      # block xmlrpc (hard kill)
+      location = /xmlrpc.php {
+        return 444;
+      }
+
+      # wp-login rate limit
+      location = /wp-login.php {
+        limit_req zone=wp burst=5 nodelay;
+      }
+
+      # wp-admin rate limit
+      location /wp-admin/ {
+        limit_req zone=wp burst=10 nodelay;
+      }
+
 spec:
   ingressClassName: nginx
   tls:
@@ -35,3 +52,4 @@ spec:
                 name: wordpress-happyminds
                 port:
                   number: 80
+``
