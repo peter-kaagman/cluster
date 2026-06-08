@@ -75,7 +75,7 @@ metadata:
     app.kubernetes.io/name: nginx-ingress
     app.kubernetes.io/component: controller
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
     - name: http
       port: 80
