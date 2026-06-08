@@ -4,5 +4,6 @@ metadata:
   name: nginx-ingress-controller
   namespace: nginx-ingress
 data:
+  allow-snippet-annotations: "true"
   http-snippet: |
     limit_req_zone $binary_remote_addr zone=wp:10m rate=10r/m;
