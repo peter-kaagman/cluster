@@ -2,6 +2,7 @@
 resources:
   - application-argocd.yaml
   - ingress-argocd-nginx.yaml
+  - apps/application-metallb.yaml
   - apps/application-mysql.yaml
   - apps/application-cert-manager.yaml
   - apps/application-nginx-ingress.yaml

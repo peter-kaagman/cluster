@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metallb
+  namespace: argocd
+  labels:
+    mprjv65/service: metallb
+    mprjv65/type: platform
+    mprjv65/role: networking
+  annotations:
+    mprjv65/owner: team-platform
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/peter-kaagman/cluster.git'
+    targetRevision: main
+    path: metallb
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: metallb-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+  info:
+    - name: Maintainer
+      value: Peter Kaagman
