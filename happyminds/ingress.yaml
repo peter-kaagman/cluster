@@ -8,6 +8,18 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 
+    # --- Rate limiting (algemeen, mild) ---
+    nginx.ingress.kubernetes.io/limit-rps: "10"
+    nginx.ingress.kubernetes.io/limit-rpm: "120"
+    nginx.ingress.kubernetes.io/limit-connections: "10"
+    nginx.ingress.kubernetes.io/limit-burst-multiplier: "3"
+
+    # --- XML-RPC hard block (grootste winst) ---
+    nginx.ingress.kubernetes.io/server-snippet: |
+      location = /xmlrpc.php {
+        return 403;
+      }
+
 spec:
   ingressClassName: nginx
   tls:
@@ -15,6 +27,7 @@ spec:
         - www.happyminds.nl
         - happyminds.nl
       secretName: wordpress-happyminds-tls
+
   rules:
     - host: www.happyminds.nl
       http:
@@ -26,6 +39,7 @@ spec:
                 name: wordpress-happyminds
                 port:
                   number: 80
+
     - host: happyminds.nl
       http:
         paths:
