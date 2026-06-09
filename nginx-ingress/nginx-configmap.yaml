@@ -9,6 +9,6 @@ data:
   use-forwarded-headers: "true"
   forwarded-for-header: "X-Forwarded-For"
   compute-full-forwarded-for: "true"
-  proxy-real-ip-cidr: "192.168.5.0/24,10.41.0.0/16
+  proxy-real-ip-cidr: "192.168.5.0/24,10.42.0.0/16
   http-snippet: |
     limit_req_zone $binary_remote_addr zone=wp:10m rate=10r/m;
