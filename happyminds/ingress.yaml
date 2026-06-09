@@ -8,9 +8,6 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      limit_req zone=wp burst=5 nodelay;
-
 spec:
   ingressClassName: nginx
   tls:
