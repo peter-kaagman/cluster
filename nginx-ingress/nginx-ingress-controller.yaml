@@ -74,6 +74,7 @@ metadata:
     app.kubernetes.io/component: controller
 spec:
   type: LoadBalancer
+  externalTrafficPolicy: Local
   ports:
     - name: http
       port: 80
