@@ -15,7 +15,9 @@ De semantic layer is nadrukkelijk een **overlay**:
 - Kubernetes = runtime truth
 - Declaratieve metadata = betekenis / intentie
 
----
+
+Met "semantiek" wordt bedoeld: metadata die betekenis en relaties toevoegt,
+niet alleen technische identificatie.
 
 ## Ontwerpprincipes
 
@@ -25,7 +27,6 @@ De semantic layer is nadrukkelijk een **overlay**:
 - Consistent naming (canonical names)
 - Minimalistisch (start small, expand later)
 
----
 
 ## Core Labels
 
@@ -39,7 +40,6 @@ Pragmatische richtlijn:
 Prefix:
 `mprjv65/*`
 
----
 
 ## 1. service (verplicht)
 
@@ -58,7 +58,6 @@ Canonical naam van de service.
 - geen varianten (mysql ≠ mysql-db ≠ db-mysql)
 - één naam per service
 
----
 
 ## 2. type (verplicht)
 
@@ -82,7 +81,6 @@ Functionele laag in de stack.
 | service | Business/logische services |
 | edge | Entry points (ingress, frontend, API gateway) |
 
----
 
 ## 3. role (optioneel maar aanbevolen)
 
@@ -100,57 +98,36 @@ Specifieke functie binnen het type.
 - `queue`
 - `storage`
 
----
-
-### 4. depends_on (optioneel maar belangrijk)
+### 4. depends-on (optioneel maar belangrijk)
 
 Beschrijft logische afhankelijkheden tussen services inclusief hun scope (relationele context).
 
 Formaat:
 
-mprjv65/depends_on=<service>:<scope>[,<service>:<scope>]
+mprjv65/depends-on=<service>[,<service>]
 
 #### Voorbeelden
 
-mprjv65/depends_on=mysql:shared
-mprjv65/depends_on=mysql:shared
-mprjv65/depends_on=weather-api:external
-
+mprjv65/depends-on=mysql
+mprjv65/depends-on=memcached,mysql
 #### Regels
 
+- Is een annotatie, geen label
 - Gebruik canonical service namen
 - Alleen directe afhankelijkheden
 - Geen transitive dependencies modelleren
-- Iedere dependency MOET een scope hebben
+- Dependencies bevatten alleen canonical service namen
 - Waarden alfabetisch sorteren op servicenaam (deterministisch)
 - Geen duplicaten
 - Geen spaties in de expressie
-- Maximaal 5 dependencies per service (startfase)
+- Richtlijn 5 dependencies per service (startfase)
 - Als dit structureel te krap is: model uitbreiden, niet ad-hoc omzeilen
-- Services zonder dependencies mogen het label niet bevatten
+- Services zonder dependencies mogen de annotatie niet bevatten
 
-#### Scope definitie
+#### Scope
 
-Scope beschrijft de aard van de dependency (de relatie tussen services), en is onderdeel van de dependency.
-
-De volgende waarden zijn toegestaan:
-
-- shared  
-  Resource binnen het cluster, gedeeld door meerdere services
-
-- external  
-  Resource buiten het cluster of buiten beheer (bijv. externe API)
-
-#### Belangrijke principes
-
-- Scope hoort bij de relatie, niet bij de service zelf
-- Een service kan meerdere dependencies hebben met verschillende scopes
-- Toegestane scopes zijn bewust beperkt tot: shared, external
-- `local` is gereserveerd voor een latere use-case, maar mag voorlopig niet gebruikt worden
-- Nieuwe scopes alleen toevoegen bij meerdere concrete use-cases (geen theoretische uitbreidingen)
-
-
----
+Scope is verwijderd uit het model omdat deze geen onderscheidende waarde bood.
+Dependencies worden uitsluitend op servicenaam gemodelleerd.
 
 ## 5. storage (optioneel)
 
@@ -184,12 +161,11 @@ voor interpretatie en correlatie.
 
 ### Relatie tot dependencies
 
-Storage is geen `depends_on` relatie.
+Storage is geen `depends-on` relatie.
 
 Reden:
 - storage backends zijn niet altijd gemodelleerd als services
 - storage is een eigenschap van een service, geen logische dependency tussen services
----
 
 ## 6. criticality (optioneel)
 
@@ -203,8 +179,6 @@ Impact bij failure.
 - `medium`
 - `high`
 
----
-
 ## 7. owner (optioneel)
 
 Verantwoordelijke partij.
@@ -212,8 +186,6 @@ Verantwoordelijke partij.
 Voorkeur: annotation i.p.v. label (cardinality beperken).
 
 `mprjv65/owner=`
-
----
 
 ## Waar toepassen
 
@@ -227,8 +199,8 @@ metadata:
     mprjv65/service: wordpress
     mprjv65/type: service
     mprjv65/role: frontend
-    mprjv65/depends_on: mysql:shared
   annotations:
+    mprjv65/depends-on: mysql
     mprjv65/owner: team-web
 ```
 
@@ -250,7 +222,7 @@ metadata:
 Voor eerste tests in Argo manifests is dit de minimale set:
 
 - Verplicht labels: `mprjv65/service`, `mprjv65/type`
-- Aanbevolen label: `mprjv65/depends_on`
+- Aanbevolen annotation: `mprjv65/depends-on`
 - Optioneel annotation: `mprjv65/owner`
 
 Voorbeeld (MVP):
@@ -260,8 +232,8 @@ metadata:
   labels:
     mprjv65/service: wordpress
     mprjv65/type: service
-    mprjv65/depends_on: redis:shared,mysql:shared
   annotations:
+    mprjv65/depends-on: redis,mysql
     mprjv65/owner: team-web
 ```
 
@@ -299,9 +271,9 @@ metadata:
     mprjv65/service: wordpress
     mprjv65/type: service
     mprjv65/role: frontend
-    mprjv65/depends_on: memcached:shared,mysql:shared
     mprjv65/criticality: medium
   annotations:
+    mprjv65/depends-on: memcached,mysql
     mprjv65/owner: team-web
 
 # MySQL
@@ -354,15 +326,12 @@ Aanbevolen controles vóór merge:
 
 - `mprjv65/service` en `mprjv65/type` zijn verplicht
 - `mprjv65/service` is lowercase en canonical (geen varianten)
-- `mprjv65/depends_on` bevat alleen canonical service namen met geldige scope in het format `service:scope`
-- `mprjv65/depends_on` is alfabetisch gesorteerd en zonder duplicaten
-- `mprjv65/depends_on` is optioneel, er kan ook geen dependency zijn 
+- `mprjv65/depends-on` bevat alleen canonical service namen
+- `mprjv65/depends-on` is alfabetisch gesorteerd en zonder duplicaten en zonder spaties
+- `mprjv65/depends-on` is optioneel, er kan ook geen dependency zijn 
 - owner staat bij voorkeur als annotation
 
 Start simpel:
 
 1. Handmatige review met checklist
 2. Daarna policy/lint in CI (bijv. OPA/Kyverno of script)
-
----
-
