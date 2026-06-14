@@ -7,7 +7,6 @@ metadata:
     mprjv65/service: mysite
     mprjv65/type: service
     mprjv65/role: frontend
-    mprjv65/depends_on: nginx-ingress
   annotations:
     mprjv65/owner: team-web
 spec:

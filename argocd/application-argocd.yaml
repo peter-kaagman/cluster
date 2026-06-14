@@ -7,7 +7,6 @@ metadata:
     mprjv65/service: argocd
     mprjv65/type: platform
     mprjv65/role: controller
-    mprjv65/depends_on: nginx-ingress
   annotations:
     mprjv65/owner: team-platform
 spec:

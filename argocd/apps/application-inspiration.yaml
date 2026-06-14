@@ -7,8 +7,8 @@ metadata:
     mprjv65/service: inspiration
     mprjv65/type: service
     mprjv65/role: frontend
-    mprjv65/depends_on: mysql
   annotations:
+    mprjv65/depends_on: mysql
     mprjv65/owner: team-web
 spec:
   project: default

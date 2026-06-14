@@ -1,4 +1,4 @@
-# Semantic Conventions — Mprjv65
+# Semantic Model
 
 ## Doel
 
@@ -6,18 +6,39 @@ Dit document beschrijft de minimale semantische metadata voor workloads binnen h
 
 Het doel is om:
 
-- Relaties tussen services expliciet te maken
-- Context toe te voegen bovenop Kubernetes runtime state
-- Observability te verrijken met betekenis (semantic layer)
-- Een fundament te leggen voor AI/AIOps use-cases
+- Relaties tussen services expliciet te maken  
+- Context toe te voegen bovenop Kubernetes runtime state  
+- Observability te verrijken met betekenis (semantic layer)  
+- Een fundament te leggen voor AI/AIOps use cases  
 
 De semantic layer is nadrukkelijk een **overlay**:
-- Kubernetes = runtime truth
-- Declaratieve metadata = betekenis / intentie
 
+- Kubernetes = runtime truth  
+- Declaratieve metadata = betekenis en intentie  
 
 Met "semantiek" wordt bedoeld: metadata die betekenis en relaties toevoegt,
-niet alleen technische identificatie.
+en niet alleen dient voor technische identificatie.
+
+### Rol van Semantiek
+
+Semantische labels en annotaties beschrijven de context, intentie en relaties van services.
+
+De huidige focus van dit model ligt op observability:
+
+- Verrijken van runtime data met betekenis  
+- Expliciet maken van relaties tussen services  
+- Ondersteunen van analyse en interpretatie  
+
+Observability is hiermee een eerste en concrete toepassing van de semantische laag, maar niet de enige.
+
+Semantiek fungeert als een generieke informatielaag en kan gebruikt worden als input voor andere toepassingen, zoals policy enforcement en platform governance.
+
+Deze toepassingen vallen buiten de scope van dit document en worden op dit moment niet verder uitgewerkt. Indien nodig worden aanvullende labels of annotaties toegevoegd op het moment dat deze use-cases zich aandienen.
+
+Vuistregel:
+
+Semantiek informeert; interpretatie en gedrag worden bepaald door andere lagen.
+
 
 ## Ontwerpprincipes
 
@@ -100,7 +121,7 @@ Specifieke functie binnen het type.
 
 ### 4. depends-on (optioneel maar belangrijk)
 
-Beschrijft logische afhankelijkheden tussen services inclusief hun scope (relationele context).
+Beschrijft functionele afhankelijkheden tussen services.
 
 Formaat:
 
@@ -108,21 +129,40 @@ mprjv65/depends-on=<service>[,<service>]
 
 #### Voorbeelden
 
-mprjv65/depends-on=mysql
-mprjv65/depends-on=memcached,mysql
+mprjv65/depends-on=mysql  
+mprjv65/depends-on=memcached,mysql  
+
+#### Semantiek
+
+Dependencies representeren relaties die:
+- noodzakelijk zijn voor het functioneren van een service
+- niet direct afleidbaar zijn uit Kubernetes runtime state
+
+Dependencies modelleren daarmee **functionele afhankelijkheden**, geen technische of infrastructurele wiring.
+
 #### Regels
 
-- Is een annotatie, geen label
-- Gebruik canonical service namen
-- Alleen directe afhankelijkheden
-- Geen transitive dependencies modelleren
-- Dependencies bevatten alleen canonical service namen
-- Waarden alfabetisch sorteren op servicenaam (deterministisch)
+- Is een annotation (geen label)
+- Bevat alleen canonical service namen
+- Alleen directe afhankelijkheden (geen transitieve relaties)
 - Geen duplicaten
-- Geen spaties in de expressie
-- Richtlijn 5 dependencies per service (startfase)
-- Als dit structureel te krap is: model uitbreiden, niet ad-hoc omzeilen
-- Services zonder dependencies mogen de annotatie niet bevatten
+- Geen spaties
+- Alfabetisch gesorteerd (deterministisch)
+- Richtlijn: maximaal 5 dependencies per service
+- Services zonder afhankelijkheden hebben deze annotation niet
+
+#### Niet modelleren als dependency
+
+De volgende relaties worden **niet** gemodelleerd, omdat deze al onderdeel zijn van Kubernetes runtime state of infrastructuurgedrag:
+
+- Ingress / routing (edge-relaties)
+- Netwerkconnectiviteit
+- Storage binding (PVC ↔ storage backend)
+- Kubernetes-native relaties (Pods, Services, Nodes, etc.)
+
+#### Vuistregel
+
+"Als Kubernetes de relatie al kent, wordt deze niet opnieuw semantisch vastgelegd."
 
 #### Scope
 
