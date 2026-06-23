@@ -15,3 +15,8 @@ data:
     @ini_set('upload_max_filesize', '10M');
     @ini_set('post_max_size', '10M');
     @ini_set('memory_limit', '256M');
+  uploads.ini: |
+    upload_max_filesize = 10M
+    post_max_size = 10M
+    memory_limit = 256M
+    max_execution_time = 300

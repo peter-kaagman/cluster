@@ -44,6 +44,9 @@ spec:
             - name: wp-config-extra
               mountPath: /var/www/html/wp-config-extra.php
               subPath: wp-config-extra.php
+            - name: wp-config-extra
+              mountPath: /usr/local/etc/php/conf.d/uploads.ini
+              subPath: uploads.ini
       volumes:
         - name: wp-content
           persistentVolumeClaim:
