@@ -11,6 +11,7 @@ data:
   compute-full-forwarded-for: "true"
   proxy-real-ip-cidr: "192.168.5.0/24,10.42.0.0/16"
   log-format-escape-json: "true"
-  log-format-upstream: '{"time":"$time_iso8601","remote_addr":"$remote_addr","x_forwarded_for":"$proxy_add_x_forwarded_for","request_id":"$req_id","host":"$host","method":"$request_method","uri":"$uri","args":"$args","status":$status,"request_length":$request_length,"request_time":$request_time,"bytes_sent":$bytes_sent,"body_bytes_sent":$body_bytes_sent,"referer":"$http_referer","user_agent":"$http_user_agent","upstream":"$proxy_upstream_name","upstream_addr":"$upstream_addr","upstream_status":"$upstream_status","upstream_response_time":"$upstream_response_time"}'
+  log-format-upstream: >-
+    {"time":"$time_iso8601","remote_addr":"$remote_addr","x_forwarded_for":"$proxy_add_x_forwarded_for","request_id":"$req_id","host":"$host","method":"$request_method","uri":"$uri","args":"$args","status":$status,"request_length":$request_length,"request_time":$request_time,"bytes_sent":$bytes_sent,"body_bytes_sent":$body_bytes_sent,"referer":"$http_referer","user_agent":"$http_user_agent","upstream":"$proxy_upstream_name","upstream_addr":"$upstream_addr","upstream_status":"$upstream_status","upstream_response_time":"$upstream_response_time"}
   http-snippet: |
     limit_req_zone $binary_remote_addr zone=wp:10m rate=10r/m;
