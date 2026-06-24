@@ -65,6 +65,8 @@ Belangrijkste documenten:
 	Beschrijft de pipeline en verwerking.
 - Deployment (ArgoCD): mprjv65-argocd-observability-v3.1.md
 	Beschrijft hoe het uitgerold wordt.
+- AWStats-lite bezoekersanalyse: 4 - awstats-lite-bezoekersanalyse.md
+	Kleine, directe bezoekersanalyse op basis van ingress logs.
 
 ### Wat Niet Leidend Is
 Deze documenten zijn achtergrond:
