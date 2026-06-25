@@ -1,6 +1,7 @@
 # k3s Kubernetes Cluster Setup – GitOps met ArgoCD (Mprjv65)
 
-Dit repository beschrijft de opzet van een k3s Kubernetes cluster dat beheerd wordt via GitOps met ArgoCD.
+Deze repository beschrijft de opzet van een k3s Kubernetes cluster dat beheerd wordt via GitOps met ArgoCD, met focus op reproduceerbare infrastructuur en clusterbeheer.
+
 
 De focus ligt op:
 - reproduceerbare clusteropbouw
