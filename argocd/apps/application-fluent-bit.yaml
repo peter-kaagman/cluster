@@ -56,13 +56,21 @@ spec:
                 K8S-Logging.Parser On
                 K8S-Logging.Exclude On
 
+            [FILTER]
+                Name parser
+                Match ingress.*
+                Key_Name message
+                Parser json
+                Preserve_Key On
+                Reserve_Data On
+
           outputs: |
             [OUTPUT]
                 Name loki
                 Match ingress.*
                 Host loki.observability.svc.cluster.local
                 Port 3100
-                Labels job=fluent-bit,cluster=cluster,namespace=nginx-ingress,component=ingress-controller
+                Labels job=fluent-bit,cluster=cluster,namespace=nginx-ingress,component=ingress-controller,host=$host
                 Line_Format json
                 Auto_Kubernetes_Labels Off
                 Retry_Limit False
