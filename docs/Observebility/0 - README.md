@@ -69,6 +69,10 @@ Belangrijkste documenten:
 	Kleine, directe bezoekersanalyse op basis van ingress logs.
 - Stap 1 Loki single binary: 5 - stap-1-loki-single-binary.md
 	Eerste kleine implementatiestap in de echte pipeline.
+- Stap 2 Fluent Bit naar Loki: 6 - stap-2-fluent-bit-naar-loki.md
+	Ingress logs als eerste echte ingest naar Loki.
+- Stap 3 Grafana eerste panel: via ArgoCD application-grafana.yaml
+	Eerste visuele panel op basis van LogQL in Loki.
 
 ### Wat Niet Leidend Is
 Deze documenten zijn achtergrond:

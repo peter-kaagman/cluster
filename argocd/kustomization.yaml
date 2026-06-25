@@ -7,6 +7,8 @@ resources:
   - apps/application-cert-manager.yaml
   - apps/application-nginx-ingress.yaml
   - apps/application-loki.yaml
+  - apps/application-fluent-bit.yaml
+  - apps/application-grafana.yaml
   - apps/application-mysite.yaml
   - apps/application-happyminds.yaml
   - apps/application-inspiration.yaml
