@@ -7,8 +7,11 @@ De focus ligt op:
 - duidelijke scheiding tussen bootstrap en GitOps
 - inzicht in beperkingen en ontwerpkeuzes
 
-Dit repository is onderdeel van het Mprjv65 project:
+Deze repository is onderdeel van het Mprjv65 project:
 → https://mysite.prjv.nl/category/mprjv65
+
+op dit cluster wordt ook de site gehost:
+→ https://mysite.prjv.nl
 
 ---
 
