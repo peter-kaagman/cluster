@@ -67,6 +67,8 @@ Belangrijkste documenten:
 	Beschrijft hoe het uitgerold wordt.
 - AWStats-lite bezoekersanalyse: 4 - awstats-lite-bezoekersanalyse.md
 	Kleine, directe bezoekersanalyse op basis van ingress logs.
+- Stap 1 Loki single binary: 5 - stap-1-loki-single-binary.md
+	Eerste kleine implementatiestap in de echte pipeline.
 
 ### Wat Niet Leidend Is
 Deze documenten zijn achtergrond:
