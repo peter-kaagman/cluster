@@ -13,9 +13,31 @@ spec:
   tls:
     - hosts:
         - mysite.prjv.nl
+        - www.mysite.prjv.nl
+        - www.prjv.nl
       secretName: mysite-tls
   rules:
     - host: mysite.prjv.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mysite-service
+                port:
+                  number: 5000
+    - host: www.mysite.prjv.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mysite-service
+                port:
+                  number: 5000
+    - host: www.prjv.nl
       http:
         paths:
           - path: /
