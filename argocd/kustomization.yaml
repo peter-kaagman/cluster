@@ -1,4 +1,7 @@
-# Kustomization voor ArgoCD App-of-Apps patroon
+# Kustomization voor de ArgoCD platformlaag.
+#
+# Deze laag bevat alleen de control-plane en de ArgoCD Applications.
+# De echte workloads en platformpackages leven apart onder top-level mappen.
 resources:
   - application-argocd.yaml
   - ingress-argocd-nginx.yaml

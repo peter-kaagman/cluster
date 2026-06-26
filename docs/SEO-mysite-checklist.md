@@ -102,3 +102,26 @@ Doel: structureel verbeteren van indexatie, zichtbaarheid en verkeer voor `mysit
 3. `www` DNS + redirect fixen.
 4. URL-inspectie en indexering aanvragen voor 5 prioriteitspagina's.
 5. Volgende 2 weken: 3 niche-artikelen met sterke interne links.
+
+
+Second opinion:
+
+# Phase 1: zichtbaar worden (nu)
+
+- Search Console actief monitoren
+- Homepage + 3 artikelen: title + description fixen
+- Query mapping toevoegen aan 3 artikelen
+- www redirect fixen
+
+# Phase 2: context bouwen
+
+- 1 topic cluster (3 artikelen)
+- interne links expliciet maken
+- lichte JSON-LD (Article + Person)
+
+# Phase 3: signalen versterken
+
+- delen via LinkedIn
+- links vanuit eigen projecten
+- aanpassen op basis van impressions (GSC)
+
