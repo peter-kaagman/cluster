@@ -12,11 +12,22 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
+        - prjv.nl
         - mysite.prjv.nl
         - www.mysite.prjv.nl
         - www.prjv.nl
       secretName: mysite-tls
   rules:
+    - host: prjv.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mysite-service
+                port:
+                  number: 5000
     - host: mysite.prjv.nl
       http:
         paths:
