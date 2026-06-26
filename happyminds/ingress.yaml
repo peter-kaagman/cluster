@@ -16,6 +16,10 @@ metadata:
 
     # --- XML-RPC hard block (grootste winst) ---
     nginx.ingress.kubernetes.io/server-snippet: |
+      if ($host != "www.happyminds.nl") {
+        return 301 https://www.happyminds.nl$request_uri;
+      }
+
       location = /xmlrpc.php {
         return 403;
       }
