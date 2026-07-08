@@ -497,6 +497,7 @@
             "type": "loki",
             "uid": "loki"
           },
+          "direction": "backward",
           "editorMode": "code",
           "expr": "100 * count(sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | status=\"200\" | user_agent=~\".*Googlebot.*\" | uri=~\"^/article/.*\" [30d]))) / 21",
           "queryType": "instant",
@@ -588,6 +589,18 @@
               "Value #A": "Hits"
             }
           }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "Hits"
+              }
+            ]
+          }
         }
       ],
       "type": "table"
@@ -647,7 +660,8 @@
             "type": "loki",
             "uid": "loki"
           },
-          "editorMode": "code",
+          "direction": "backward",
+          "editorMode": "builder",
           "expr": "topk(20, sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | status=\"200\" | user_agent=~\".*bingbot.*\" | uri=~\"^/article/.*\" [30d])))",
           "queryType": "instant",
           "refId": "A"
@@ -666,6 +680,18 @@
             "renameByName": {
               "Value #A": "Hits"
             }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "Hits"
+              }
+            ]
           }
         }
       ],
@@ -936,6 +962,30 @@
         "defaults": {
           "color": {
             "mode": "palette-classic"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           }
         },
         "overrides": []
@@ -949,16 +999,9 @@
       "id": 13,
       "options": {
         "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
         "showHeader": true
       },
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
@@ -1018,5 +1061,5 @@
   "timezone": "",
   "title": "SEO & Search Crawlers",
   "uid": "seo-search-crawlers",
-  "version": 3
+  "version": 4
 }
