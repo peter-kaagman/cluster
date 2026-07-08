@@ -577,26 +577,14 @@
       "title": "Top articles crawled by Google - 200 only",
       "transformations": [
         {
-          "id": "reduce",
-          "options": {
-            "reducers": [
-              "last"
-            ]
-          }
-        },
-        {
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Field": false
+              "Time": true
             },
             "includeByName": {},
             "indexByName": {},
-            "orderByMode": "manual",
-            "renameByName": {
-              "Field": "URI",
-              "Last": "Hits"
-            }
+            "renameByName": {}
           }
         }
       ],
@@ -1013,5 +1001,5 @@
   "timezone": "",
   "title": "SEO & Search Crawlers",
   "uid": "seo-search-crawlers",
-  "version": 1
+  "version": 2
 }
