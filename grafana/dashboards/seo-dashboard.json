@@ -584,7 +584,9 @@
             },
             "includeByName": {},
             "indexByName": {},
-            "renameByName": {}
+            "renameByName": {
+              "Value #A": "Hits"
+            }
           }
         }
       ],
@@ -652,6 +654,21 @@
         }
       ],
       "title": "Top articles crawled by Bing - 200 only",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value #A": "Hits"
+            }
+          }
+        }
+      ],
       "type": "table"
     },
     {
@@ -1001,5 +1018,5 @@
   "timezone": "",
   "title": "SEO & Search Crawlers",
   "uid": "seo-search-crawlers",
-  "version": 2
+  "version": 3
 }
