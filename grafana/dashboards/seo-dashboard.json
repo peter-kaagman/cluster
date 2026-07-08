@@ -1,0 +1,215 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "targets": [
+        {
+          "expr": "sum(count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | user_agent=~\".*Googlebot.*\" [1h]))",
+          "refId": "A"
+        }
+      ],
+      "title": "Googlebot Requests",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 2,
+      "targets": [
+        {
+          "expr": "sum(count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | user_agent=~\".*bingbot.*\" [1h]))",
+          "refId": "A"
+        }
+      ],
+      "title": "Bingbot Requests",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 3,
+      "targets": [
+        {
+          "expr": "topk(20, sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | user_agent=~\".*Googlebot.*\" | uri=~\"^/article/.*\" [30d])))",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Articles Crawled By Google",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 4,
+      "targets": [
+        {
+          "expr": "topk(20, sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | user_agent=~\".*bingbot.*\" | uri=~\"^/article/.*\" [30d])))",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Articles Crawled By Bing",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 5,
+      "targets": [
+        {
+          "expr": "sum(count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | uri=\"/sitemap.xml\" [30d]))",
+          "refId": "A"
+        }
+      ],
+      "title": "Sitemap Requests",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 6,
+      "targets": [
+        {
+          "expr": "sum(count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | uri=\"/robots.txt\" [30d]))",
+          "refId": "A"
+        }
+      ],
+      "title": "Robots.txt Requests",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 7,
+      "targets": [
+        {
+          "expr": "topk(25, sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | status=\"404\" | user_agent=~\".*(Googlebot|bingbot).*\" [30d])))",
+          "refId": "A"
+        }
+      ],
+      "title": "Crawler 404 Errors",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 39,
+  "tags": [
+    "seo",
+    "search",
+    "crawlers"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allValue": ".+",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "loki",
+          "uid": "loki"
+        },
+        "definition": "label_values({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\"}, host)",
+        "includeAll": true,
+        "label": "Host",
+        "multi": false,
+        "name": "host",
+        "query": "label_values({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\"}, host)",
+        "refresh": 1,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "title": "SEO & Search Crawlers",
+  "uid": "seo-dashboard",
+  "version": 1
+}
