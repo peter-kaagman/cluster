@@ -12,3 +12,4 @@ configMapGenerator:
   - name: grafana-dashboard-ingress-traffic-first-panel
     files:
       - dashboards/ingress-traffic-first-panel.json
+      - dashboards/seo-dashboard.json
