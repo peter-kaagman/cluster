@@ -29,13 +29,31 @@
         "y": 0
       },
       "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
       "targets": [
         {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
           "expr": "sum(count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | user_agent=~\".*Googlebot.*\" [1h]))",
+          "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Googlebot Requests",
+      "title": "Googlebot requests per hour",
       "type": "timeseries"
     },
     {
@@ -58,13 +76,31 @@
         "y": 0
       },
       "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
       "targets": [
         {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
           "expr": "sum(count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | user_agent=~\".*bingbot.*\" [1h]))",
+          "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Bingbot Requests",
+      "title": "Bingbot requests per hour",
       "type": "timeseries"
     },
     {
@@ -72,62 +108,209 @@
         "type": "loki",
         "uid": "loki"
       },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "green",
+                "value": 10
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 5,
+        "w": 6,
         "x": 0,
         "y": 8
       },
       "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
       "targets": [
         {
-          "expr": "topk(20, sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | user_agent=~\".*Googlebot.*\" | uri=~\"^/article/.*\" [30d])))",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "sum(count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | uri=\"/sitemap.xml\" [30d]))",
+          "queryType": "instant",
           "refId": "A"
         }
       ],
-      "title": "Top Articles Crawled By Google",
-      "type": "timeseries"
+      "title": "Sitemap requests - 30d",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "loki",
         "uid": "loki"
       },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "green",
+                "value": 10
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
       "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
+        "h": 5,
+        "w": 6,
+        "x": 6,
         "y": 8
       },
       "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
       "targets": [
         {
-          "expr": "topk(20, sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | user_agent=~\".*bingbot.*\" | uri=~\"^/article/.*\" [30d])))",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "sum(count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | uri=\"/robots.txt\" [30d]))",
+          "queryType": "instant",
           "refId": "A"
         }
       ],
-      "title": "Top Articles Crawled By Bing",
-      "type": "timeseries"
+      "title": "Robots.txt requests - 30d",
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "loki",
         "uid": "loki"
       },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "green",
+                "value": 10
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
       "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 16
+        "h": 5,
+        "w": 6,
+        "x": 12,
+        "y": 8
       },
       "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
       "targets": [
         {
-          "expr": "sum(count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | uri=\"/sitemap.xml\" [30d]))",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "count(sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | status=\"200\" | user_agent=~\".*Googlebot.*\" | uri=~\"^/article/.*\" [30d])))",
+          "queryType": "instant",
           "refId": "A"
         }
       ],
-      "title": "Sitemap Requests",
+      "title": "Unique Google article URLs - 30d",
       "type": "stat"
     },
     {
@@ -135,20 +318,72 @@
         "type": "loki",
         "uid": "loki"
       },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 25
+              },
+              {
+                "color": "green",
+                "value": 60
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
       "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 16
+        "h": 5,
+        "w": 6,
+        "x": 18,
+        "y": 8
       },
       "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
       "targets": [
         {
-          "expr": "sum(count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | uri=\"/robots.txt\" [30d]))",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "100 * count(sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | status=\"200\" | user_agent=~\".*Googlebot.*\" | uri=~\"^/article/.*\" [30d]))) / 21",
+          "queryType": "instant",
           "refId": "A"
         }
       ],
-      "title": "Robots.txt Requests",
+      "title": "Google article coverage - 21 sitemap articles",
       "type": "stat"
     },
     {
@@ -156,21 +391,329 @@
         "type": "loki",
         "uid": "loki"
       },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
       "gridPos": {
-        "h": 10,
-        "w": 24,
+        "h": 9,
+        "w": 12,
         "x": 0,
-        "y": 24
+        "y": 13
       },
       "id": 7,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
       "targets": [
         {
-          "expr": "topk(25, sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | status=\"404\" | user_agent=~\".*(Googlebot|bingbot).*\" [30d])))",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "topk(20, sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | status=\"200\" | user_agent=~\".*Googlebot.*\" | uri=~\"^/article/.*\" [30d])))",
+          "queryType": "instant",
           "refId": "A"
         }
       ],
-      "title": "Crawler 404 Errors",
-      "type": "timeseries"
+      "title": "Top articles crawled by Google - 200 only",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 13
+      },
+      "id": 8,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "topk(20, sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | status=\"200\" | user_agent=~\".*bingbot.*\" | uri=~\"^/article/.*\" [30d])))",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Top articles crawled by Bing - 200 only",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 22
+      },
+      "id": 9,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "topk(20, sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | status=~\"301|302|307|308\" | user_agent=~\".*Googlebot.*\" [30d])))",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Googlebot redirects - 30d",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 22
+      },
+      "id": 10,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "topk(20, sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | status=~\"301|302|307|308\" | user_agent=~\".*bingbot.*\" [30d])))",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Bingbot redirects - 30d",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 31
+      },
+      "id": 11,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "topk(25, sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | status=\"404\" | user_agent=~\".*Googlebot.*\" [30d])))",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Googlebot 404 errors - 30d",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 31
+      },
+      "id": 12,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "topk(25, sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | status=\"404\" | user_agent=~\".*bingbot.*\" [30d])))",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Bingbot 404 errors - 30d",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 40
+      },
+      "id": 13,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "editorMode": "code",
+          "expr": "topk(30, sum by (user_agent) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | user_agent=~\".*(Googlebot|bingbot|DuckDuckBot|YandexBot|Baiduspider|Applebot|OAI-SearchBot|PerplexityBot).*\" [30d])))",
+          "queryType": "instant",
+          "refId": "A"
+        }
+      ],
+      "title": "Known crawler user agents - 30d",
+      "type": "table"
     }
   ],
   "refresh": "1m",
@@ -178,28 +721,34 @@
   "tags": [
     "seo",
     "search",
-    "crawlers"
+    "crawlers",
+    "ingress",
+    "loki"
   ],
   "templating": {
     "list": [
       {
         "allValue": ".+",
         "current": {
-          "selected": true,
-          "text": "All",
-          "value": "$__all"
+          "selected": false,
+          "text": "mysite.prjv.nl",
+          "value": "mysite.prjv.nl"
         },
         "datasource": {
           "type": "loki",
           "uid": "loki"
         },
         "definition": "label_values({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\"}, host)",
+        "hide": 0,
         "includeAll": true,
         "label": "Host",
         "multi": false,
         "name": "host",
+        "options": [],
         "query": "label_values({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\"}, host)",
         "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
         "sort": 1,
         "type": "query"
       }
@@ -209,7 +758,10 @@
     "from": "now-30d",
     "to": "now"
   },
+  "timepicker": {},
+  "timezone": "",
   "title": "SEO & Search Crawlers",
-  "uid": "seo-dashboard",
-  "version": 1
+  "uid": "seo-search-crawlers",
+  "version": 1,
+  "weekStart": ""
 }
