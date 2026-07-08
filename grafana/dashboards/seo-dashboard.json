@@ -425,7 +425,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "topk(20, sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | status=\"200\" | user_agent=~\".*Googlebot.*\" | uri=~\"^/article/.*\" [30d])))",
+          "expr": "topk(20, sum by (uri) (count_over_time({job=\"fluent-bit\",namespace=\"nginx-ingress\",component=\"ingress-controller\",host=~\"$host\"} | json | status=200 | user_agent=~\".*Googlebot.*\" | uri=~\"^/article/.*\" [30d])))",
           "queryType": "instant",
           "refId": "A"
         }
