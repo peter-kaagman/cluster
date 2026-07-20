@@ -1,0 +1,56 @@
+        kind: DaemonSet
+
+        testFramework:
+          enabled: false
+
+        config:
+          service: |
+            [SERVICE]
+                Daemon Off
+                Flush 1
+                Log_Level info
+                Parsers_File /fluent-bit/etc/parsers.conf
+                Parsers_File /fluent-bit/etc/conf/custom_parsers.conf
+                HTTP_Server On
+                HTTP_Listen 0.0.0.0
+                HTTP_Port 2020
+                Health_Check On
+
+          inputs: |
+            [INPUT]
+                Name tail
+                Path /var/log/containers/*_nginx-ingress_*.log
+                Parser cri
+                Tag ingress.*
+                Mem_Buf_Limit 10MB
+                Skip_Long_Lines On
+                Refresh_Interval 5
+                Read_From_Head Off
+
+          filters: |
+            [FILTER]
+                Name kubernetes
+                Match ingress.*
+                Merge_Log On
+                Keep_Log Off
+                K8S-Logging.Parser On
+                K8S-Logging.Exclude On
+
+            [FILTER]
+                Name parser
+                Match ingress.*
+                Key_Name message
+                Parser json
+                Preserve_Key On
+                Reserve_Data On
+
+          outputs: |
+            [OUTPUT]
+                Name loki
+                Match ingress.*
+                Host loki.observability.svc.cluster.local
+                Port 3100
+                Labels job=fluent-bit,cluster=cluster,namespace=nginx-ingress,component=ingress-controller,host=$host
+                Line_Format json
+                Auto_Kubernetes_Labels Off
+                Retry_Limit False
