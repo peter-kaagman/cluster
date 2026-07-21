@@ -7,3 +7,11 @@ datasources:
     url: http://loki.observability.svc.cluster.local:3100
     isDefault: true
     editable: true
+
+  - name: Prometheus
+    uid: prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus-kube-prometheus-prometheus.observability.svc.cluster.local:9090
+    isDefault: true
+    editable: true
