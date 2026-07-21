@@ -12,20 +12,24 @@ metadata:
 
 spec:
   project: default
+  sources:
+    - repoURL: https://fluent.github.io/helm-charts
+      chart: fluent-bit
+      targetRevision: 0.57.7
 
-  source:
-    repoURL: 'https://github.com/peter-kaagman/cluster.git'
-    targetRevision: main
-    path: fluent-bit
-
+      helm:
+        releaseName: fluent-bit
+        valueFiles:
+          - $values/fluent-bit/values.yaml
+    - repoURL: https://github.com/peter-kaagman/cluster.git
+      targetRevision: main
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: observability
-
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-
     syncOptions:
       - CreateNamespace=true
