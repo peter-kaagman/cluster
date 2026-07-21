@@ -11,6 +11,7 @@ resources:
   - apps/application-nginx-ingress.yaml
   - apps/application-loki.yaml
   - apps/application-fluent-bit.yaml
+  - apps/application-prometheus.yaml
   - apps/application-grafana.yaml
   - apps/application-mysite.yaml
   - apps/application-happyminds.yaml
