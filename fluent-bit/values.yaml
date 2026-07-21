@@ -19,18 +19,23 @@ config:
   inputs: |
     [INPUT]
         Name tail
-        Path /var/log/containers/*_nginx-ingress_*.log
+        Path /var/log/containers/*.log
         Parser cri
-        Tag ingress.*
-        Mem_Buf_Limit 10MB
-        Skip_Long_Lines On
-        Refresh_Interval 5
-        Read_From_Head Off
+        Tag kube.*
+    # [INPUT]
+    #     Name tail
+    #     Path /var/log/containers/*_nginx-ingress_*.log
+    #     Parser cri
+    #     Tag ingress.*
+    #     Mem_Buf_Limit 10MB
+    #     Skip_Long_Lines On
+    #     Refresh_Interval 5
+    #     Read_From_Head Off
 
   filters: |
     [FILTER]
         Name kubernetes
-        Match ingress.*
+        Match kube.*
         Merge_Log On
         Keep_Log Off
         K8S-Logging.Parser On
@@ -38,19 +43,44 @@ config:
 
     [FILTER]
         Name parser
-        Match ingress.*
-        Key_Name message
+        Match kube.*
+        Key_Name log
         Parser json
         Preserve_Key On
-        Reserve_Data On
+        Reserve_Data On    
+    # [FILTER]
+    #     Name kubernetes
+    #     Match ingress.*
+    #     Merge_Log On
+    #     Keep_Log Off
+    #     K8S-Logging.Parser On
+    #     K8S-Logging.Exclude On
+
+    # [FILTER]
+    #     Name parser
+    #     Match ingress.*
+    #     Key_Name message
+    #     Parser json
+    #     Preserve_Key On
+    #     Reserve_Data On
 
   outputs: |
     [OUTPUT]
         Name loki
-        Match ingress.*
+        Match kube.*
         Host loki.observability.svc.cluster.local
         Port 3100
-        Labels job=fluent-bit,cluster=cluster,namespace=nginx-ingress,component=ingress-controller,host=$host
+        Auto_Kubernetes_Labels On
+        Labels job=fluent-bit,cluster=mprjv65
         Line_Format json
-        Auto_Kubernetes_Labels Off
         Retry_Limit False
+
+    # [OUTPUT]
+    #     Name loki
+    #     Match ingress.*
+    #     Host loki.observability.svc.cluster.local
+    #     Port 3100
+    #     Labels job=fluent-bit,cluster=cluster,namespace=nginx-ingress,component=ingress-controller,host=$host
+    #     Line_Format json
+    #     Auto_Kubernetes_Labels Off
+    #     Retry_Limit False
