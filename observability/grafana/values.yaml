@@ -1,0 +1,48 @@
+testFramework:
+  enabled: false
+
+admin:
+  existingSecret: grafana-admin-secret
+  userKey: admin-user
+  passwordKey: admin-password
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/auth-type: "basic"
+    nginx.ingress.kubernetes.io/auth-secret: "argocd-basic-auth"
+    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+  hosts:
+    - grafana.prjv.nl
+  path: /
+  pathType: Prefix
+  tls:
+    - secretName: grafana-tls
+      hosts:
+        - grafana.prjv.nl
+
+extraVolumes:
+  - name: grafana-datasources
+    configMap:
+      name: grafana-datasources
+  - name: grafana-dashboard-providers
+    configMap:
+      name: grafana-dashboard-providers
+  - name: grafana-dashboard-ingress
+    configMap:
+      name: grafana-dashboard-ingress-traffic-first-panel
+
+extraVolumeMounts:
+  - name: grafana-datasources
+    mountPath: /etc/grafana/provisioning/datasources
+    readOnly: true
+  - name: grafana-dashboard-providers
+    mountPath: /etc/grafana/provisioning/dashboards
+    readOnly: true
+  - name: grafana-dashboard-ingress
+    mountPath: /var/lib/grafana/dashboards/default
+    readOnly: true

@@ -1,0 +1,93 @@
+{
+  "title": "MySite Performance",
+  "uid": "mysite-performance",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "timezone": "browser",
+  "tags": ["mysite", "prometheus"],
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "HTTP Requests/sec",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "rate(mysite_http_requests_total[5m])",
+          "legendFormat": "requests/sec"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "DB Queries / Request",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "rate(mysite_db_queries_total[5m]) / rate(mysite_http_requests_total[5m])",
+          "legendFormat": "queries/request"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 2
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Request Time Breakdown avg ms",
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "rate(mysite_http_request_duration_ms_sum[5m]) / rate(mysite_http_request_duration_ms_count[5m])",
+          "legendFormat": "HTTP request"
+        },
+        {
+          "expr": "rate(mysite_db_query_duration_ms_sum[5m]) / rate(mysite_db_query_duration_ms_count[5m])",
+          "legendFormat": "DB query"
+        },
+        {
+          "expr": "rate(mysite_markdown_render_duration_ms_sum[5m]) / rate(mysite_markdown_render_duration_ms_count[5m])",
+          "legendFormat": "Markdown render"
+        },
+        {
+          "expr": "rate(mysite_template_render_duration_ms_sum[5m]) / rate(mysite_template_render_duration_ms_count[5m])",
+          "legendFormat": "Template render"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 2
+        },
+        "overrides": []
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Work/sec",
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 18 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "rate(mysite_db_queries_total[5m])",
+          "legendFormat": "DB queries/sec"
+        },
+        {
+          "expr": "rate(mysite_markdown_render_total[5m])",
+          "legendFormat": "Markdown renders/sec"
+        },
+        {
+          "expr": "rate(mysite_template_render_total[5m])",
+          "legendFormat": "Template renders/sec"
+        }
+      ]
+    }
+  ]
+}
