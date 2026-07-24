@@ -67,17 +67,3 @@ spec:
         - name: images
           persistentVolumeClaim:
             claimName: mysite-images-pvc
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: mysite-service
-spec:
-  selector:
-    app: mysite
-  ports:
-    - protocol: TCP
-      port: 5000
-      targetPort: 5000
-  type: ClusterIP            

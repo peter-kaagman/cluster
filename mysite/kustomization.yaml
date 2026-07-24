@@ -4,5 +4,7 @@ resources:
   - images-pvc.yaml
   - memcached-deployment.yaml
   - deployment.yaml
+  - service.yaml
+  - servicemonitor.yaml
   - ingress-mysite.yaml
-  # Voeg hier eventueel service, ingress, enz. toe
+  

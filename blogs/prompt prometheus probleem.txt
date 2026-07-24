@@ -1,0 +1,137 @@
+Ik deploy kube-prometheus-stack 78.5.0 op een single-node k3s cluster via ArgoCD.
+
+De deployment lijkt grotendeels succesvol:
+
+- Prometheus Operator draait
+- kube-state-metrics draait
+- node-exporter draait
+- ServiceMonitors zijn aangemaakt
+- De Prometheus CR bestaat
+
+Maar:
+
+- Er wordt geen StatefulSet voor Prometheus aangemaakt
+- Er wordt geen Prometheus pod aangemaakt
+- kubectl get prometheus toont DESIRED=1 maar READY leeg
+- De Prometheus CR heeft geen status sectie
+- Er zijn geen Events op de Prometheus resource
+- Er zijn geen reconcile errors in de operator logs
+- kubectl get sts -n observability toont geen Prometheus StatefulSet
+
+Output van kubectl get prometheus:
+
+pkn@k3s:~/cluster$ kubectl -n observability get prometheus
+NAME                                    VERSION   DESIRED   READY   RECONCILED   AVAILABLE   AGE
+prometheus-kube-prometheus-prometheus   v3.7.2    1                                          23m
+pkn@k3s:~/cluster$ 
+
+Output van kubectl get all -n observability:
+
+pkn@k3s:~/cluster$ kubectl -n observability get all
+NAME                                                       READY   STATUS    RESTARTS      AGE
+pod/fluent-bit-pxhlp                                       1/1     Running   0             89m
+pod/grafana-67674d4787-s7qhp                               1/1     Running   0             13d
+pod/loki-0                                                 2/2     Running   6 (13d ago)   26d
+pod/loki-chunks-cache-0                                    2/2     Running   6 (13d ago)   26d
+pod/loki-results-cache-0                                   2/2     Running   6 (13d ago)   26d
+pod/prometheus-kube-prometheus-operator-7b85cc4f5f-s5nb9   1/1     Running   0             30m
+pod/prometheus-kube-state-metrics-77d7b66d8d-hs2bk         1/1     Running   0             30m
+pod/prometheus-prometheus-node-exporter-n9xw5              1/1     Running   0             30m
+
+NAME                                            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)              AGE
+service/fluent-bit                              ClusterIP   10.43.225.94    <none>        2020/TCP             6h45m
+service/grafana                                 ClusterIP   10.43.59.179    <none>        80/TCP               26d
+service/loki                                    ClusterIP   10.43.165.231   <none>        3100/TCP,9095/TCP    26d
+service/loki-chunks-cache                       ClusterIP   None            <none>        11211/TCP,9150/TCP   26d
+service/loki-headless                           ClusterIP   None            <none>        3100/TCP             26d
+service/loki-memberlist                         ClusterIP   None            <none>        7946/TCP             26d
+service/loki-results-cache                      ClusterIP   None            <none>        11211/TCP,9150/TCP   26d
+service/prometheus-kube-prometheus-operator     ClusterIP   10.43.4.192     <none>        443/TCP              30m
+service/prometheus-kube-prometheus-prometheus   ClusterIP   10.43.101.251   <none>        9090/TCP,8080/TCP    30m
+service/prometheus-kube-state-metrics           ClusterIP   10.43.83.131    <none>        8080/TCP             30m
+service/prometheus-prometheus-node-exporter     ClusterIP   10.43.8.139     <none>        9100/TCP             30m
+
+NAME                                                 DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR     AGE
+daemonset.apps/fluent-bit                            1         1         1       1            1           <none>     6h45m
+daemonset.apps/prometheus-prometheus-node-exporter   1         1         1       1            1           kubernetes.io/os=linux   30m
+
+NAME                                                  READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/grafana                               1/1     1            1           26d
+deployment.apps/prometheus-kube-prometheus-operator   1/1     1            1           30m
+deployment.apps/prometheus-kube-state-metrics         1/1     1            1           30m
+
+NAME                                                             DESIRED   CURRENT   READY   AGE
+replicaset.apps/grafana-574548f9f                                0         0         0       26d
+replicaset.apps/grafana-5f764cb985                               0         0         0       26d
+replicaset.apps/grafana-65978766f6                               0         0         0       25d
+replicaset.apps/grafana-67674d4787                               1         1         1       13d
+replicaset.apps/grafana-68dd9d7cdf                               0         0         0       25d
+replicaset.apps/grafana-76bf6545bb                               0         0         0       26d
+replicaset.apps/grafana-786cff5b4d                               0         0         0       25d
+replicaset.apps/grafana-7886c68c9d                               0         0         0       26d
+replicaset.apps/grafana-7f85d59f84                               0         0         0       25d
+replicaset.apps/grafana-854b4fc459                               0         0         0       26d
+replicaset.apps/grafana-dc95b77fd                                0         0         0       26d
+replicaset.apps/prometheus-kube-prometheus-operator-7b85cc4f5f   1         1         1       30m
+replicaset.apps/prometheus-kube-state-metrics-77d7b66d8d         1         1         1       30m
+
+NAME                                  READY   AGE
+statefulset.apps/loki                 1/1     26d
+statefulset.apps/loki-chunks-cache    1/1     26d
+statefulset.apps/loki-results-cache   1/1     26d
+
+Output van kubectl get events -n observability:
+
+pkn@k3s:~/cluster$ kubectl -n observability get events
+LAST SEEN   TYPE      REASON                  OBJECT                                                      MESSAGE
+29m         Normal    Scheduled               pod/prometheus-kube-prometheus-admission-create-7w6jj       Successfully assigned observability/prometheus-kube-prometheus-admission-create-7w6jj to k3s
+29m         Normal    Pulled                  pod/prometheus-kube-prometheus-admission-create-7w6jj       Container image "registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.6.3" already present on machine and can be accessed by the pod
+29m         Normal    Created                 pod/prometheus-kube-prometheus-admission-create-7w6jj       Container created
+29m         Normal    Started                 pod/prometheus-kube-prometheus-admission-create-7w6jj       Container started
+24m         Normal    Scheduled               pod/prometheus-kube-prometheus-admission-create-826nn       Successfully assigned observability/prometheus-kube-prometheus-admission-create-826nn to k3s
+24m         Normal    Pulled                  pod/prometheus-kube-prometheus-admission-create-826nn       Container image "registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.6.3" already present on machine and can be accessed by the pod
+24m         Normal    Created                 pod/prometheus-kube-prometheus-admission-create-826nn       Container created
+24m         Normal    Started                 pod/prometheus-kube-prometheus-admission-create-826nn       Container started
+30m         Normal    Scheduled               pod/prometheus-kube-prometheus-admission-create-lgs95       Successfully assigned observability/prometheus-kube-prometheus-admission-create-lgs95 to k3s
+30m         Normal    Pulling                 pod/prometheus-kube-prometheus-admission-create-lgs95       Pulling image "registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.6.3"
+30m         Normal    Pulled                  pod/prometheus-kube-prometheus-admission-create-lgs95       Successfully pulledimage "registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.6.3" in 1.703s (1.703s including waiting). Image size: 18846799 bytes.
+30m         Normal    Created                 pod/prometheus-kube-prometheus-admission-create-lgs95       Container created
+30m         Normal    Started                 pod/prometheus-kube-prometheus-admission-create-lgs95       Container started
+27m         Normal    Scheduled               pod/prometheus-kube-prometheus-admission-create-qbh49       Successfully assigned observability/prometheus-kube-prometheus-admission-create-qbh49 to k3s
+27m         Normal    Pulled                  pod/prometheus-kube-prometheus-admission-create-qbh49       Container image "registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.6.3" already present on machine and can be accessed by the pod
+27m         Normal    Created                 pod/prometheus-kube-prometheus-admission-create-qbh49       Container created
+27m         Normal    Started                 pod/prometheus-kube-prometheus-admission-create-qbh49       Container started
+30m         Normal    SuccessfulCreate        job/prometheus-kube-prometheus-admission-create             Created pod: prometheus-kube-prometheus-admission-create-lgs95
+30m         Normal    Completed               job/prometheus-kube-prometheus-admission-create             Job completed
+29m         Normal    SuccessfulCreate        job/prometheus-kube-prometheus-admission-create             Created pod: prometheus-kube-prometheus-admission-create-7w6jj
+29m         Normal    Completed               job/prometheus-kube-prometheus-admission-create             Job completed
+27m         Normal    SuccessfulCreate        job/prometheus-kube-prometheus-admission-create             Created pod: prometheus-kube-prometheus-admission-create-qbh49
+27m         Normal    Completed               job/prometheus-kube-prometheus-admission-create             Job completed
+24m         Normal    SuccessfulCreate        job/prometheus-kube-prometheus-admission-create             Created pod: prometheus-kube-prometheus-admission-create-826nn
+24m         Normal    Completed               job/prometheus-kube-prometheus-admission-create             Job completed
+30m         Normal    Scheduled               pod/prometheus-kube-prometheus-operator-7b85cc4f5f-s5nb9    Successfully assigned observability/prometheus-kube-prometheus-operator-7b85cc4f5f-s5nb9 to k3s
+30m         Normal    Pulling                 pod/prometheus-kube-prometheus-operator-7b85cc4f5f-s5nb9    Pulling image "quay.io/prometheus-operator/prometheus-operator:v0.86.1"
+30m         Normal    Pulled                  pod/prometheus-kube-prometheus-operator-7b85cc4f5f-s5nb9    Successfully pulledimage "quay.io/prometheus-operator/prometheus-operator:v0.86.1" in 2.676s (2.676s including waiting). Image size: 19409734 bytes.
+30m         Normal    Created                 pod/prometheus-kube-prometheus-operator-7b85cc4f5f-s5nb9    Container created
+30m         Normal    Started                 pod/prometheus-kube-prometheus-operator-7b85cc4f5f-s5nb9    Container started
+30m         Normal    SuccessfulCreate        replicaset/prometheus-kube-prometheus-operator-7b85cc4f5f   Created pod: prometheus-kube-prometheus-operator-7b85cc4f5f-s5nb9
+30m         Normal    ScalingReplicaSet       deployment/prometheus-kube-prometheus-operator              Scaled up replica set prometheus-kube-prometheus-operator-7b85cc4f5f from 0 to 1
+30m         Warning   ClusterIPNotAllocated   service/prometheus-kube-prometheus-prometheus               Cluster IP [IPv4]: 10.43.101.251 is not allocated; repairing
+30m         Normal    Scheduled               pod/prometheus-kube-state-metrics-77d7b66d8d-hs2bk          Successfully assigned observability/prometheus-kube-state-metrics-77d7b66d8d-hs2bk to k3s
+30m         Normal    Pulling                 pod/prometheus-kube-state-metrics-77d7b66d8d-hs2bk          Pulling image "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.17.0"
+30m         Normal    Pulled                  pod/prometheus-kube-state-metrics-77d7b66d8d-hs2bk          Successfully pulledimage "registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.17.0" in 1.465s (1.465s including waiting). Image size: 18895170 bytes.
+30m         Normal    Created                 pod/prometheus-kube-state-metrics-77d7b66d8d-hs2bk          Container created
+30m         Normal    Started                 pod/prometheus-kube-state-metrics-77d7b66d8d-hs2bk          Container started
+30m         Normal    SuccessfulCreate        replicaset/prometheus-kube-state-metrics-77d7b66d8d         Created pod: prometheus-kube-state-metrics-77d7b66d8d-hs2bk
+30m         Normal    ScalingReplicaSet       deployment/prometheus-kube-state-metrics                    Scaled up replica set prometheus-kube-state-metrics-77d7b66d8d from 0 to 1
+30m         Normal    Scheduled               pod/prometheus-prometheus-node-exporter-n9xw5               Successfully assigned observability/prometheus-prometheus-node-exporter-n9xw5 to k3s
+30m         Normal    Pulling                 pod/prometheus-prometheus-node-exporter-n9xw5               Pulling image "quay.io/prometheus/node-exporter:v1.9.1"
+30m         Normal    Pulled                  pod/prometheus-prometheus-node-exporter-n9xw5               Successfully pulledimage "quay.io/prometheus/node-exporter:v1.9.1" in 2.08s (2.08s including waiting). Image size: 12955907 bytes.
+30m         Normal    Created                 pod/prometheus-prometheus-node-exporter-n9xw5               Container created
+30m         Normal    Started                 pod/prometheus-prometheus-node-exporter-n9xw5               Container started
+30m         Normal    SuccessfulCreate        daemonset/prometheus-prometheus-node-exporter               Created pod: prometheus-prometheus-node-exporter-n9xw5
+
+Wat zou verklaren dat de Prometheus Operator wel draait en de Prometheus CR ziet, maar geen StatefulSet creëert?
+Welke kubectl commando's zou je vervolgens uitvoeren?
+
+Maak geen wijzigingen, alleen rapporteren.
