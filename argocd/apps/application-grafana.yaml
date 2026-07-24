@@ -18,13 +18,13 @@ spec:
       helm:
         releaseName: grafana
         valueFiles:
-          - $values/grafana/values.yaml
+          - $values/observability/grafana/values.yaml
     - repoURL: https://github.com/peter-kaagman/cluster.git
       targetRevision: main
       ref: values
     - repoURL: https://github.com/peter-kaagman/cluster.git
       targetRevision: main
-      path: grafana
+      path: observability/grafana
   destination:
     server: https://kubernetes.default.svc
     namespace: observability
