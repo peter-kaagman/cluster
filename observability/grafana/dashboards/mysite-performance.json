@@ -57,6 +57,10 @@
           "legendFormat": "Markdown render"
         },
         {
+          "expr": "rate(mysite_template_render_self_duration_ms_sum[5m]) / rate(mysite_template_render_self_duration_ms_count[5m])",
+          "legendFormat": "Template self"
+        },
+        {
           "expr": "rate(mysite_template_render_duration_ms_sum[5m]) / rate(mysite_template_render_duration_ms_count[5m])",
           "legendFormat": "Template render"
         }
