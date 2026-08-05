@@ -17,6 +17,7 @@ spec:
             solverName: transip
             config:
               accountName: peterkaagman
+              ttl: 300
               privateKeySecretRef:
                 name: transip-credentials
                 key: privateKey
