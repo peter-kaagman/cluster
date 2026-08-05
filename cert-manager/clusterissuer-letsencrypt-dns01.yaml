@@ -15,3 +15,8 @@ spec:
           webhook:
             groupName: prjv.nl
             solverName: transip
+            config:
+              accountName: peterkaagman
+              privateKeySecretRef:
+                name: transip-credentials
+                key: privateKey
