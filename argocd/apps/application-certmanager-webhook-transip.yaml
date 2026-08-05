@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager-webhook-transip
+  namespace: argocd
+
+spec:
+  project: default
+
+  destination:
+    namespace: cert-manager
+    server: https://kubernetes.default.svc
+
+  sources:
+    - repoURL: https://demeester.dev/cert-manager-webhook-transip
+      chart: cert-manager-webhook-transip
+      targetRevision: 0.1.4
+      helm:
+        valueFiles:
+          - $values/networking/cert-manager-webhook-transip/values.yaml
+
+    - repoURL: https://github.com/peter-kaagman/cluster.git
+      targetRevision: main
+      ref: values
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=truemulti

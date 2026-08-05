@@ -16,3 +16,4 @@ resources:
   - apps/application-mysite.yaml
   - apps/application-happyminds.yaml
   - apps/application-inspiration.yaml
+  - apps/application-certmanager-webhook-transip.yaml
