@@ -18,7 +18,7 @@ spec:
       helm:
         releaseName: cert-manager
         valueFiles:
-          - $values/argocd/values/cert-manager.yaml
+          - $values/cert-manager/values.yaml
     - repoURL: git@github.com:peter-kaagman/cluster.git
       targetRevision: main
       ref: values

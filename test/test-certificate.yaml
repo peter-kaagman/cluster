@@ -13,4 +13,3 @@ spec:
 
   dnsNames:
     - "*.prjv.nl"
-    - prjv.nl
