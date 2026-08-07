@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: pkntest
+  namespace: mysite
+
+spec:
+  secretName: pkntest-tls
+
+  issuerRef:
+    name: letsencrypt-dns01
+    kind: ClusterIssuer
+
+  dnsNames:
+    - "pkntest.prjv.nl"
