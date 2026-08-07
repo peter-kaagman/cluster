@@ -4,13 +4,15 @@ metadata:
   name: argocd-server-ingress
   namespace: argocd
   annotations:
-    nginx.ingress.kubernetes.io/auth-type: "basic"
-    nginx.ingress.kubernetes.io/auth-secret: "argocd-basic-auth"
-    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # nginx.ingress.kubernetes.io/auth-type: "basic"
+    # nginx.ingress.kubernetes.io/auth-secret: "argocd-basic-auth"
+    # nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+    cert-manager.io/cluster-issuer: "letsencrypt-dns01"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     # Let op: basic-auth werkt alleen op HTTP/HTTPS, niet op gRPC endpoints
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/whitelist-source-range: "192.168.5.0/24,192.168.15.0/24"
+
 spec:
   ingressClassName: nginx
   tls:
