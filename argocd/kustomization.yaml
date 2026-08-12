@@ -17,3 +17,4 @@ resources:
   - apps/application-happyminds.yaml
   - apps/application-inspiration.yaml
   - apps/application-certmanager-webhook-transip.yaml
+  - apps/application-cloudnative-pg.yaml
