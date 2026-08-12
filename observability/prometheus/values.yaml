@@ -3,3 +3,11 @@ grafana:
 
 alertmanager:
   enabled: false
+
+prometheus:
+  prometheusSpec:
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+
+    podMonitorSelector: {}
+    serviceMonitorSelector: {}
