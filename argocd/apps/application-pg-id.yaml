@@ -9,8 +9,8 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/<jouw-repo>
-    targetRevision: HEAD
+    repoURL: https://github.com/peterkaagman/cluster.git
+    targetRevision: main
     path: databases/pg-id
 
   destination:
