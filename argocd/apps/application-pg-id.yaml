@@ -9,7 +9,7 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/peterkaagman/cluster.git
+    repoURL: https://github.com/peter-kaagman/cluster.git
     targetRevision: main
     path: databases/pg-id
 
