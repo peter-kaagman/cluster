@@ -42,3 +42,16 @@ $lq --since="$SINCE" --limit=5000 '
 | remote_addr=~"66\\.249\\.75\\.(196|197)"
 | line_format "{{.time}}\t{{.remote_addr}}\t{{.uri}}"
 ' | wc -l
+
+echo
+echo "== Verified Googlebot /article hits =="
+$lq --since="$SINCE" --limit=5000 '
+{job="fluent-bit",service_name="nginx-ingress"}
+| json
+| line_format "{{.message}}"
+| json
+| host="mysite.prjv.nl"
+| uri=~"/article/.*"
+| remote_addr=~"66\\.249\\.75\\.(196|197)"
+| line_format "{{.time}}\t{{.remote_addr}}\t{{.uri}}"
+'
