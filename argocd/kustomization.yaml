@@ -18,3 +18,4 @@ resources:
   - apps/application-inspiration.yaml
   - apps/application-certmanager-webhook-transip.yaml
   - apps/application-cloudnative-pg.yaml
+  - apps/application-pg-id.yaml
