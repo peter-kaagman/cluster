@@ -17,6 +17,7 @@ spec:
       labels:
         app: mysite
     spec:
+      revisionHistoryLimit: 3
       imagePullSecrets:
         - name: ghcr-secret
       containers:

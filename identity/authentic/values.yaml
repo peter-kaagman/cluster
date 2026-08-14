@@ -1,0 +1,9 @@
+postgresql:
+  enabled: false
+
+redis:
+  enabled: false
+
+authentik:
+  existingSecret:
+    secretName: authentik-config

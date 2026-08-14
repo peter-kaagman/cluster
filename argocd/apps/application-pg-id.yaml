@@ -4,6 +4,16 @@ kind: Application
 metadata:
   name: pg-id
   namespace: argocd
+  labels:
+    mprjv65/service: pg-id
+    mprjv65/type: platform
+    mprjv65/role: database
+    mprjv65/storage: local
+    mprjv65/criticality: high
+  annotations:
+    mprjv65/depends-on: cloudnative-pg
+    mprjv65/owner: peter
+
 
 spec:
   project: default
