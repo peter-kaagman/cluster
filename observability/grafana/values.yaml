@@ -83,3 +83,4 @@ grafana.ini:
     email_attribute_path: email
 
     role_attribute_path: "'Admin'"
+    allow_assign_grafana_admin: true
