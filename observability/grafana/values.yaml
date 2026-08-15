@@ -47,3 +47,39 @@ extraVolumeMounts:
   - name: grafana-dashboard-ingress
     mountPath: /var/lib/grafana/dashboards/default
     readOnly: true
+
+envValueFrom:
+  GF_AUTH_GENERIC_OAUTH_CLIENT_ID:
+    secretKeyRef:
+      name: grafana-oauth-secret
+      key: client-id
+
+  GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET:
+    secretKeyRef:
+      name: grafana-oauth-secret
+      key: client-secret
+
+grafana.ini:
+  server:
+    root_url: https://grafana.prjv.nl
+
+  "auth.generic_oauth":
+    enabled: true
+    auto_login: false
+    name: Authentik
+    allow_sign_up: true
+
+    client_id: $__env{GF_AUTH_GENERIC_OAUTH_CLIENT_ID}
+    client_secret: $__env{GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET}
+
+    scopes: openid profile email
+
+    auth_url: https://portal.prjv.nl/application/o/authorize/
+    token_url: https://portal.prjv.nl/application/o/token/
+    api_url: https://portal.prjv.nl/application/o/userinfo/
+
+    login_attribute_path: preferred_username
+    name_attribute_path: name
+    email_attribute_path: email
+
+    role_attribute_path: "'Admin'"
