@@ -4,3 +4,20 @@ postgresql:
 authentik:
   existingSecret:
     secretName: authentik-config
+
+server:
+  ingress:
+    enabled: true
+
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-dns01
+
+    ingressClassName: nginx
+
+    hosts:
+      - portal.prjv.nl
+
+    tls:
+      - secretName: portal-prjv-tls
+        hosts:
+          - portal.prjv.nl
