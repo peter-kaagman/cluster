@@ -72,7 +72,7 @@ grafana.ini:
     client_id: $__env{GF_AUTH_GENERIC_OAUTH_CLIENT_ID}
     client_secret: $__env{GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET}
 
-    scopes: openid profile email
+    scopes: openid profile email is_cluster_admin
 
     auth_url: https://portal.prjv.nl/application/o/authorize/
     token_url: https://portal.prjv.nl/application/o/token/
@@ -82,5 +82,5 @@ grafana.ini:
     name_attribute_path: name
     email_attribute_path: email
 
-    role_attribute_path: "'Admin'"
+    role_attribute_path: is_cluster_admin && 'Admin' || 'Viewer'
     allow_assign_grafana_admin: true
