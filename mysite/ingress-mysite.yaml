@@ -8,7 +8,14 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     nginx.ingress.kubernetes.io/proxy-body-size: "10m"
     nginx.ingress.kubernetes.io/server-snippet: |
+      set $mysite_redirect 0;
       if ($host != "mysite.prjv.nl") {
+        set $mysite_redirect 1;
+      }
+      if ($request_uri ~ "^/.well-known/acme-challenge/") {
+        set $mysite_redirect 0;
+      }
+      if ($mysite_redirect = 1) {
         return 301 https://mysite.prjv.nl$request_uri;
       }
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
