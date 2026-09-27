@@ -44,6 +44,9 @@ spec:
         lokiCanary:
           enabled: false
 
+        chunksCache:
+          allocatedMemory: 2048
+
         loki:
           auth_enabled: false
           commonConfig:
