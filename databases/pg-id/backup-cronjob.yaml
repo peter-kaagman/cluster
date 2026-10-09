@@ -6,7 +6,7 @@ metadata:
   namespace: pg-id
 
 spec:
-  schedule: "0 1 * * *"
+  schedule: "0 23 * * *"
 
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 3
