@@ -12,7 +12,7 @@ spec:
 
       containers:
       - name: backup
-        image: ghcr.io/cloudnative-pg/postgresql:17
+        image: ghcr.io/cloudnative-pg/postgresql:18.3-system-trixie
 
         env:
         - name: PGUSER
