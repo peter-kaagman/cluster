@@ -1,54 +1,49 @@
 apiVersion: batch/v1
 kind: Job
+
 metadata:
   name: pg-id-backup
   namespace: pg-id
 
 spec:
-  schedule: "5 1 * * *"
-
-  successfulJobsHistoryLimit: 1
-  failedJobsHistoryLimit: 3
-
-  jobTemplate:
+  template:
     spec:
-      template:
-        spec:
-          restartPolicy: Never
+      restartPolicy: Never
 
-          containers:
-          - name: backup
-            image: ghcr.io/cloudnative-pg/postgresql:17
+      containers:
+      - name: backup
+        image: ghcr.io/cloudnative-pg/postgresql:17
 
-            env:
-            - name: PGUSER
-              valueFrom:
-                secretKeyRef:
-                  name: pg-id-app
-                  key: username
+        env:
+        - name: PGUSER
+          valueFrom:
+            secretKeyRef:
+              name: pg-id-app
+              key: username
 
-            - name: PGPASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: pg-id-app
-                  key: password
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pg-id-app
+              key: password
 
-            command:
-            - /bin/bash
-            - -c
-            - |
-              set -euo pipefail
+        command:
+        - /bin/bash
+        - -c
+        - |
+          set -euo pipefail
 
-              pg_dump \
-                -h pg-id-rw \
-                -U "$PGUSER" \
-                | gzip > /backup/pg-id.sql.gz
+          pg_dump \
+            -h pg-id-rw \
+            -U "$PGUSER" \
+            "$PGUSER" \
+            | gzip > /backup/pg-id.sql.gz
 
-            volumeMounts:
-            - name: backup
-              mountPath: /backup
+        volumeMounts:
+        - name: backup
+          mountPath: /backup
 
-          volumes:
-          - name: backup
-            persistentVolumeClaim:
-              claimName: pg-id-backups
+      volumes:
+      - name: backup
+        persistentVolumeClaim:
+          claimName: pg-id-backups
