@@ -1,3 +1,4 @@
 # Lokale tijdelijke bestanden
 tmp/
 vault-token-secret.yaml
+.swp
