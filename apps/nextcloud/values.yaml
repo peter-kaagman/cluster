@@ -4,6 +4,9 @@ nextcloud:
   trustedDomains:
     - nc.prjv.nl
 
+internalDatabase:
+  enabled: false
+
 postgresql:
   enabled: false
 
