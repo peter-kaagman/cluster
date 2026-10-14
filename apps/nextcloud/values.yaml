@@ -10,6 +10,19 @@ nextcloud:
     - name: OVERWRITEHOST
       value: nc.prjv.nl
 
+    configs:
+      trusted-proxy.config.php: |
+        <?php
+        $CONFIG = array(
+          'trusted_proxies' => array(
+            '10.42.0.0/16',
+            '10.43.0.0/16'
+          ),
+          'forwarded_for_headers' => array(
+            'HTTP_X_FORWARDED_FOR',
+          ),
+        );
+
 persistence:
   enabled: true
 
