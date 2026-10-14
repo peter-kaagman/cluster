@@ -29,6 +29,9 @@ nextcloud:
         ),
       );
 
+cronjob:
+  enabled: true
+
 persistence:
   enabled: true
 
