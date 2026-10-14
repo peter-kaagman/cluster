@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+
+metadata:
+  name: nextcloud
+  namespace: argocd
+  labels:
+    mprjv65/service: nextcloud
+    mprjv65/type: application
+    mprjv65/role: collaboration
+    mprjv65/storage: local
+    mprjv65/criticality: medium
+  annotations:
+    mprjv65/depends-on: pg-nc
+    mprjv65/owner: peter
+
+spec:
+  project: default
+
+  sources:
+    - repoURL: https://nextcloud.github.io/helm/
+      chart: nextcloud
+      targetRevision: 9.4.0
+      helm:
+        valueFiles:
+          - $values/apps/nextcloud/values.yaml
+
+    - repoURL: https://github.com/peter-kaagman/cluster.git
+      targetRevision: main
+      ref: values
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: nextcloud
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+    syncOptions:
+      - CreateNamespace=true

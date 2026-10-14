@@ -1,0 +1,35 @@
+nextcloud:
+  host: nc.prjv.nl
+
+  trustedDomains:
+    - nc.prjv.nl
+
+postgresql:
+  enabled: false
+
+redis:
+  enabled: true
+
+externalDatabase:
+  enabled: true
+  type: postgresql
+
+  existingSecret:
+    enabled: true
+    secretName: nextcloud-config
+    usernameKey: db-username
+    passwordKey: db-password
+    hostKey: db-host
+    databaseKey: db-name
+
+ingress:
+  enabled: true
+  className: nginx
+
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+
+  tls:
+    - secretName: nextcloud-tls
+      hosts:
+        - nc.prjv.nl
