@@ -4,6 +4,9 @@ nextcloud:
   trustedDomains:
     - nc.prjv.nl
 
+phpClientHttpsFix:
+  enabled: true
+  protocol: https
 
 internalDatabase:
   enabled: false
