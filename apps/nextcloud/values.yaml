@@ -11,6 +11,12 @@ nextcloud:
       value: nc.prjv.nl
 
   configs:
+    maintenance.config.php: |
+      <?php
+      $CONFIG = array(
+        'maintenance_window_start' => 3,
+      );
+
     trusted-proxy.config.php: |
       <?php
       $CONFIG = array(
