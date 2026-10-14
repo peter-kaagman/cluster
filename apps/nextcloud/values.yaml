@@ -10,6 +10,13 @@ nextcloud:
     - name: OVERWRITEHOST
       value: nc.prjv.nl
 
+persistence:
+  enabled: true
+
+  nextcloudData:
+    enabled: true
+    existingClaim: nextcloud-data-pvc
+
 phpClientHttpsFix:
   enabled: true
   protocol: https
