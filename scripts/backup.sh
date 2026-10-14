@@ -16,6 +16,7 @@ echo "Ik ben $me"
 declare -A SOURCES=(
     ["etc"]="/etc/"
     ["pvcs"]="/var/lib/rancher/k3s/storage/"
+    ["k3s-server"]="/var/lib/rancher/k3s/server/"
     ["homes"]="/home/"
 )
 

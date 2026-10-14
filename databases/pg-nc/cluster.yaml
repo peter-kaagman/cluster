@@ -1,0 +1,21 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+
+metadata:
+  name: pg-nc
+  namespace: pg-nc
+
+spec:
+  instances: 1
+
+  bootstrap:
+    initdb:
+      database: nextcloud
+      owner: nextcloud
+
+  monitoring:
+    enablePodMonitor: true
+
+  storage:
+    storageClass: local-path
+    size: 20Gi

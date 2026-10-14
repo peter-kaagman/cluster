@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: CronJob
+
+metadata:
+  name: pg-nc-backup
+  namespace: pg-nc
+
+spec:
+  schedule: "0 23 * * *"
+
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+
+          containers:
+          - name: backup
+            image: ghcr.io/cloudnative-pg/postgresql:18.3-system-trixie
+
+            env:
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: pg-nc-app
+                  key: username
+
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pg-nc-app
+                  key: password
+
+            command:
+            - /bin/bash
+            - -c
+            - |
+              set -euo pipefail
+
+              pg_dump \
+                -h pg-nc-rw \
+                -U "$PGUSER" \
+                "$PGUSER" \
+                | gzip > /backup/pg-nc.sql.gz
+
+            volumeMounts:
+            - name: backup
+              mountPath: /backup
+
+          volumes:
+          - name: backup
+            persistentVolumeClaim:
+              claimName: pg-nc-backups
