@@ -10,7 +10,20 @@ nextcloud:
     - name: OVERWRITEHOST
       value: nc.prjv.nl
 
+  phpConfigs:
+    uploads.ini: |
+      upload_max_filesize = 10G
+      post_max_size = 10G
+      max_execution_time = 3600
+      max_input_time = 3600
+
   configs:
+    local-servers.config.php: |
+      <?php
+      $CONFIG = array(
+        'allow_local_remote_servers' => true,
+      );
+
     maintenance.config.php: |
       <?php
       $CONFIG = array(
@@ -27,6 +40,12 @@ nextcloud:
         'forwarded_for_headers' => array(
           'HTTP_X_FORWARDED_FOR',
         ),
+      );
+
+    default-region.config.php: |
+      <?php
+      $CONFIG = array(
+        'default_phone_region' => 'NL',
       );
 
 cronjob:
@@ -70,6 +89,7 @@ ingress:
 
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/proxy-body-size: "10G"
 
   tls:
     - secretName: nextcloud-tls
