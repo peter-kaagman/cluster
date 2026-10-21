@@ -84,7 +84,7 @@ externalDatabase:
     databaseKey: db-name
 
 ingress:
-  enabled: true
+  enabled: false
   className: nginx
 
   annotations:
