@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: onlyoffice
+  namespace: onlyoffice
+  labels:
+    app: onlyoffice
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: onlyoffice
+
+  template:
+    metadata:
+      labels:
+        app: onlyoffice
+
+    spec:
+      containers:
+        - name: onlyoffice
+          image: onlyoffice/documentserver:latest
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+
+          env:
+            - name: JWT_ENABLED
+              value: "true"
+
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: onlyoffice-config
+                  key: jwt-secret

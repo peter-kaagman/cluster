@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  name: onlyoffice
+  namespace: onlyoffice
+  labels:
+    app: onlyoffice
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+
+spec:
+  ingressClassName: nginx
+
+  tls:
+    - hosts:
+        - office.prjv.nl
+      secretName: onlyoffice-tls
+
+  rules:
+    - host: office.prjv.nl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: onlyoffice
+                port:
+                  name: http
