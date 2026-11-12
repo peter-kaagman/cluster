@@ -19,7 +19,24 @@ spec:
       labels:
         app: onlyoffice
 
+
     spec:
+      volumes:
+        - name: onlyoffice-data
+          persistentVolumeClaim:
+            claimName: onlyoffice-data
+
+      initContainers:
+        - name: init-storage
+          image: busybox:1.37
+          command:
+            - sh
+            - -c
+            - mkdir -p /storage/data /storage/lib /storage/postgresql /storage/rabbitmq
+          volumeMounts:
+            - name: onlyoffice-data
+              mountPath: /storage
+
       containers:
         - name: onlyoffice
           image: onlyoffice/documentserver@sha256:ca17889f10b11141cc6441836aebdd2835cf3e1b49681b2fd6e155c94b7850b3
@@ -29,6 +46,23 @@ spec:
             - name: http
               containerPort: 80
               protocol: TCP
+
+          volumeMounts:
+            - name: onlyoffice-data
+              mountPath: /var/www/onlyoffice/Data
+              subPath: data
+
+            - name: onlyoffice-data
+              mountPath: /var/lib/onlyoffice
+              subPath: lib
+
+            - name: onlyoffice-data
+              mountPath: /var/lib/postgresql
+              subPath: postgresql
+
+            - name: onlyoffice-data
+              mountPath: /var/lib/rabbitmq
+              subPath: rabbitmq
 
           env:
             - name: JWT_ENABLED
