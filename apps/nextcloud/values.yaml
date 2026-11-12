@@ -9,6 +9,12 @@ nextcloud:
       value: https://nc.prjv.nl
     - name: OVERWRITEHOST
       value: nc.prjv.nl
+    - name: ONLYOFFICE_JWT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: onlyoffice-config
+          key: jwt-secret
+          optional: false
 
   phpConfigs:
     uploads.ini: |
@@ -46,6 +52,17 @@ nextcloud:
       <?php
       $CONFIG = array(
         'default_phone_region' => 'NL',
+      );
+
+    onlyoffice.config.php: |
+      <?php
+      $CONFIG = array(
+        'onlyoffice' => array(
+          'default_server' => 'https://office.prjv.nl',
+          'verify_peer_off' => false,
+          'jwt_header' => 'AuthorizationJwt',
+          'jwt_secret' => getenv('ONLYOFFICE_JWT_SECRET') ?: '',
+        ),
       );
 
 cronjob:
